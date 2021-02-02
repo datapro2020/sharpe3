@@ -79,7 +79,7 @@ text_side_bar = st.sidebar.markdown(
     '<br><br><br>', unsafe_allow_html=True
 )
 text_side_bar = st.sidebar.markdown(
-    '<b>How it works:</b><br><p>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br><br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.<p><br><br><br><br><br><br>',
+    '<b>How it works:</b><br><p>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br><br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.<p><br><br><br><br><br><br><br><br>',
     unsafe_allow_html=True
 )
 
