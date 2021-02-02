@@ -46,7 +46,7 @@ def Info():
  
 
 
-st.markdown('<h1>Data Driving Investing</h1><br>', unsafe_allow_html=True
+st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True
 )
 
 
@@ -58,8 +58,8 @@ title_side_bar = st.sidebar.markdown(
 
 
 search_side_bar = st.sidebar.text_input(
-    'eg. CSCO,TSLA,NIO',
-    'TSLA,GOOG,CSCO'
+    'eg. TSLA,PTON,AAPL',
+    'TSLA,PTON,AAPL'
 )
 
 button_side_bar = st.sidebar.button(
@@ -79,10 +79,12 @@ text_side_bar = st.sidebar.markdown(
     '<br><br><br>', unsafe_allow_html=True
 )
 text_side_bar = st.sidebar.markdown(
-    '<b>How it works:</b><br>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.',
+    '<b>How it works:</b><br><p>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br><br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.<p><br><br><br><br><br><br>',
     unsafe_allow_html=True
 )
 
+about_side_bar=st.sidebar.markdown('<p><a href="#about">About Sharpe 3</a></p>', unsafe_allow_html=True
+)
 
 
 
@@ -95,7 +97,7 @@ portfolio = search_side_bar.split(',')
 st.markdown('<br>', unsafe_allow_html=True)  
 
 # Performance
-st.markdown('<h2>Performance</h2><br>', unsafe_allow_html=True)
+st.markdown('<h1>Performance</h1><br>', unsafe_allow_html=True)
 
 #st.title('Performance')
 with st.beta_expander('Description: click here 👉'):
@@ -199,7 +201,7 @@ with col3:
     
 
 st.markdown('<br>', unsafe_allow_html=True)
-#st.bokeh_chart(toolbox.Plot_Portfolio(p_opt),use_container_width=True)
+
 
 
 st.markdown('<br>', unsafe_allow_html=True)
@@ -245,6 +247,13 @@ st.markdown('<br>', unsafe_allow_html=True)
 #    st.dataframe(byW.style.highlight_max(axis=0))
 
 
-st.markdown('<br>', unsafe_allow_html=True)   
-Disclaimer = 'DISCLAIMER: Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are a mathematical model based in historical public information.'
+st.markdown('<br><br><br>', unsafe_allow_html=True)   
+Disclaimer = 'DISCLAIMER: Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are based in a mathematical model calculated with historical public information.'
 st.info(Disclaimer)
+
+st.markdown('<hr/><br><br><br><br>', unsafe_allow_html=True)
+st.markdown('<h2 id="about">About Us</h2>', unsafe_allow_html=True)
+st.markdown('<p> Sharpe 3 provides clarity to simplify data driven investment deccisions. <br>Based in a Machine Leraning and data analytics technology, the Sharpe 3 platform can proccess thousands of calculations and data points to present a new perpective of stock assets. </p>', unsafe_allow_html=True)
+st.markdown('<p> Every stock deccision is in a permanend cross-road. In one direcction, there is a lot of "hype" and misinformation for trendy assets. In other direcctions, an universe of data based mathematical and statistical models, known as a Quantitative analysis (QA), complex to understand.</p>', unsafe_allow_html=True)
+st.markdown('<p>Sharpe 3 help individual investors to discover valuable data to complement every investment action <br>', unsafe_allow_html=True)
+
