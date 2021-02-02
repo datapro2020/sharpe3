@@ -34,7 +34,7 @@ pn.extension()
 pn.config.js_files  = {'deck': 'https://unpkg.com/deck.gl@~5.2.0/deckgl.min.js'}
 pn.config.css_files = ['https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css']
 
-%matplotlib inline
+
 
 rf = 0
 
