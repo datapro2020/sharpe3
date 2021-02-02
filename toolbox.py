@@ -14,6 +14,7 @@ from sklearn.cluster import KMeans
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Label, LabelSet, Range1d
 import hvplot.pandas
+import altair as alt
 
 #from math import sqrt
 #import  pylab as pl
@@ -25,7 +26,7 @@ rf = 0 #Risk free return
 #Fortmat output
 pct = lambda x: '{:.2%}'.format(x)
 dig = lambda x: '{:.2f}'.format(x)
-
+to_float = lambda x: float(x.strip('%'))/100
 
 # Timing
 D=400
@@ -113,7 +114,7 @@ def P_Optimization(df):
     portfolios  = pd.DataFrame(data) #Dataframe of the 5000 portfolios created
     min_vol_port = portfolios.loc[portfolios['Volatility'].idxmin()]
     optimal_risky_port = portfolios.loc[((portfolios['Returns']- rf)/portfolios['Volatility']).idxmax()]
-    return optimal_risky_port, min_vol_port,  
+    return optimal_risky_port, min_vol_port
 
 def GetWeights(or_p,mv_p):
     df = pd.concat([or_p,mv_p], axis=1)
@@ -126,48 +127,19 @@ def GetWeights(or_p,mv_p):
 
 
 
-def Plot_P_Optimization(portfolios,price):
-        min_vol_port = portfolios.loc[portfolios['Volatility'].idxmin()]
-        optimal_risky_port = portfolios.loc[((portfolios['Returns']- rf)/portfolios['Volatility']).idxmax()]
-        ann_mean = price.pct_change().apply(lambda x: np.log(1+x)).mean().apply(lambda x: x*250)
-        ann_std = price.pct_change().apply(lambda x: np.log(1+x)).std().apply(lambda x: x*np.sqrt(250))
-              
-        # Plotting optimal portfolio
-    #    portfolios.plot.scatter(x='Volatility', y='Returns', marker='o', s=10, alpha=0.3, grid=True, figsize=[10,10])
-        plt.subplots(figsize=(10, 10))
-        plt.scatter(portfolios['Volatility'], portfolios['Returns'], marker='o', s=10, alpha=0.3)
-        plt.xlabel('Volatility', fontsize=20)
-        plt.ylabel('Returns', fontsize=20)
-        plt.scatter(min_vol_port[1], min_vol_port[0], color='r', marker='*', s=400, label='Minimum volatility')
-        plt.legend(loc='upper left', fontsize=12)
-        plt.scatter(optimal_risky_port[1], optimal_risky_port[0], color='g', marker='*', s=400, label='Maximum Sharpe ratio')
-        plt.legend(loc='best', fontsize=12)
-                
-        #Plotting individual assets
-        for i in price.columns:
-            plt.scatter(ann_std[i], ann_mean[i], color='b' , marker='.', s=500)
-            plt.annotate('   '+i, (ann_std[i], ann_mean[i]), ha='left', va='center')
+def Plot_P_Optimization(df):
     
-         #Saving plots to use them later    
-       # plt.savefig('data/img/'+s+'_optimal_porfolio.png')
-        plt.cla()
-        plt.close('all')
-        #return 
-
-def Plot_Portfolio(df):
-    p = figure(title='Risk / Reward view', sizing_mode="stretch_width")
-    df.index.name = 'stocks'
-    source = ColumnDataSource(df)
-    p.scatter(x='Volatility', y='Return', size=8, source=df) 
-    p.xaxis[0].axis_label = 'Volatility (log)'
-    p.yaxis[0].axis_label = 'Return (log)'
-    labels = LabelSet(x='Volatility', y='Return', text='stocks', level='glyph',
-              x_offset=5, y_offset=5, source=source, render_mode='canvas')
-    p.add_layout(labels)
-    return p
-
-def Plot_Performance(df):
-    return df.plot.bar(stacked=True)
+    df = df.reset_index()
+    df['index'] = df['index'].apply(str)
+    df['Return'] = df['Return'].apply(to_float)
+    df['Volatility'] = df['Volatility'].apply(to_float)
+    print(df)
+    points = alt.Chart(df).mark_point().encode(alt.X('Volatility:Q',scale=alt.Scale(zero=False)
+    ),y='Return:Q')
+    
+    text = points.mark_text(align='left',baseline='middle',dx=7).encode(text='index')
+    
+    return points + text
 
 
 #K-Means Clustering
@@ -220,8 +192,8 @@ def Core_Calculations(portfolio, price):
     Sharpe = (ann_mean - rf)/ann_std
 
     #Optimization
-    optimal_risky_port, min_vol_port,  = P_Optimization(price)
-
+    optimal_risky_port, min_vol_port= P_Optimization(price)
+    
     #Aggregation of Returns, Volatility and Sharpes
     indice = portfolio+['Minimum Volatility','Maximum Sharpe ratio']
     df = pd.DataFrame(0, index = indice, columns = ['Return','Volatility','Sharpe'])
@@ -240,7 +212,5 @@ def Core_Calculations(portfolio, price):
     df['Return'] = df['Return'].apply(pct)
     df['Volatility'] = df['Volatility'].apply(pct)
 
-
-
-    return df, optimal_risky_port, min_vol_port 
+    return df, optimal_risky_port, min_vol_port
 

@@ -114,7 +114,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 
 
-p_opt,or_p, mv_p = toolbox.Core_Calculations(portfolio,price)
+
 
 st.markdown('<br>', unsafe_allow_html=True)  
 
@@ -174,16 +174,17 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 #Portfolio Optimization
 st.title('Portfolio Optimization')
+
 p_opt,or_p, mv_p = toolbox.Core_Calculations(portfolio,price)
 
 with st.beta_expander('Description'):
         st.write('Modern Portfolio Theory, or also known as mean-variance analysis is a mathematical process which allows the user to maximize returns for a given risk level')
         st.write('This concept is also closely related to "risk-return" trade-off. Sharpe is the key metric of the risk-return of every asset or portfolio combination')
 
-col1, col2 = st.beta_columns(2)
+col1, col2, col3 = st.beta_columns(3)
 
 with col1:
-    st.header("Risk/Reward")
+    st.header("Risk/Reward table")
     st.dataframe(p_opt.style.highlight_max(axis=0))
 
 with col2:
@@ -192,8 +193,14 @@ with col2:
     df = df.applymap(dig)
     st.dataframe(df.style.highlight_max(axis=0))
 
+with col3:
+    st.header("Risk/Reward chart")
+    st.altair_chart(toolbox.Plot_P_Optimization(p_opt), use_container_width=True)
+    
+
 st.markdown('<br>', unsafe_allow_html=True)
-st.bokeh_chart(toolbox.Plot_Portfolio(p_opt),use_container_width=True)
+#st.bokeh_chart(toolbox.Plot_Portfolio(p_opt),use_container_width=True)
+
 
 st.markdown('<br>', unsafe_allow_html=True)
 
