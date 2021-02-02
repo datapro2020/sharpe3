@@ -202,7 +202,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 st.markdown('<br>', unsafe_allow_html=True)   
 #st.title('Rankings')
 #with st.beta_expander('Description'):
-        st.write('Clustering by industry clasification or Machine Learning')
+        #st.write('Clustering by industry clasification or Machine Learning')
 
 #tupper = Info()
 #bySharpe = tupper.sort_values(by='Sharpe', ascending = False).head(10)
