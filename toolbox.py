@@ -133,7 +133,7 @@ def Plot_P_Optimization(df):
     df['index'] = df['index'].apply(str)
     df['Return'] = df['Return'].apply(to_float)
     df['Volatility'] = df['Volatility'].apply(to_float)
-    print(df)
+    
     points = alt.Chart(df).mark_point().encode(alt.X('Volatility:Q',scale=alt.Scale(zero=False)
     ),y='Return:Q')
     
