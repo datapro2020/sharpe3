@@ -78,9 +78,11 @@ for percent_complete in range(100):
 text_side_bar = st.sidebar.markdown(
     '<br><br><br>', unsafe_allow_html=True
 )
-text_side_bar = st.sidebar.write(
-    'How it works:'
+text_side_bar = st.sidebar.markdown(
+    '<b>How it works:</b><br>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.',
+    unsafe_allow_html=True
 )
+
 
 
 
@@ -97,7 +99,7 @@ st.markdown('<h2>Performance</h2><br>', unsafe_allow_html=True)
 
 #st.title('Performance')
 with st.beta_expander('Description: click here 👉'):
-        st.write('Modern Portfolio Teory')
+        st.write('PMT')
 
 
 
@@ -120,7 +122,8 @@ st.markdown('<br>', unsafe_allow_html=True)
 # Correlations
 st.title('Correlations')
 with st.beta_expander('Description'):
-        st.write('Modern Portfolio Teory')
+        st.write('Correlation, in the finance and investment studies, is a statistic that measures the degree to which two assets move in relation to each other. Correlations are used in advanced portfolio management, computed as the correlation coefficient, which has a value that must fall between -1.0 and +1.0. The closer to 0, the less correlated.')
+        st.write('Diversification Index is computed with the sum of correlations of every asset in a portfolio divided by the number of assets. The closer to 0, the more diversicated is the portfolio')
 
 
 
@@ -130,6 +133,7 @@ with st.beta_expander('Description'):
 
 
 
+st.markdown('<br>', unsafe_allow_html=True)  
 
 
 options = st.multiselect(
@@ -144,25 +148,25 @@ if 'Portfolio' in options:
     corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
     div_index = dig(abs(corr.iloc[:,0].sum()-1)/(len(corr.index)))
     st.dataframe(corr.style.highlight_min(axis=0))
-    st.write('Diversification Index = '+div_index)
+    st.write('Diversification Index = ',div_index)
 
 if 'vs US index' in options:
     corrUS = toolbox.My_Corr(price,US)
     div_index_us = dig(abs(corrUS.iloc[:,0].sum()-1)/(len(corrUS.index)))
     st.dataframe(corrUS.style.highlight_min(axis=0))
-    st.write('Diversification Index = '+div_index_us)
+    st.write('Diversification Index = ',div_index_us)
 
 if 'vs Bitcoin' in options:
     corrBTC = toolbox.My_Corr(price,BTC)
     div_index_btc = dig(abs(corrBTC.iloc[:,0].sum()-1)/(len(corrBTC.index)))
     st.dataframe(corrBTC.style.highlight_min(axis=0))
-    st.write('Diversification Index = '+div_index_btc)
+    st.write('Diversification Index = ',div_index_btc)
 
 if 'vs Gold' in options:
     corrGOLD = toolbox.My_Corr(price,GOLD)
     div_index_btc = dig(abs(corrGOLD.iloc[:,0].sum()-1)/(len(corrGOLD.index)))
     st.dataframe(corrGOLD.style.highlight_min(axis=0))
-    st.write('Diversification Index = '+div_index_gold)
+    st.write('Diversification Index = ',div_index_gold)
 
 
 st.markdown('<br>', unsafe_allow_html=True)  
@@ -173,8 +177,8 @@ st.title('Portfolio Optimization')
 p_opt,or_p, mv_p = toolbox.Core_Calculations(portfolio,price)
 
 with st.beta_expander('Description'):
-        st.write('Modern Portfolio Teory')
-
+        st.write('Modern Portfolio Theory, or also known as mean-variance analysis is a mathematical process which allows the user to maximize returns for a given risk level')
+        st.write('This concept is also closely related to "risk-return" trade-off. Sharpe is the key metric of the risk-return of every asset or portfolio combination')
 
 col1, col2 = st.beta_columns(2)
 
@@ -196,42 +200,42 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 
 st.markdown('<br>', unsafe_allow_html=True)   
-st.title('Rankings')
-with st.beta_expander('Description'):
+#st.title('Rankings')
+#with st.beta_expander('Description'):
         st.write('Clustering by industry clasification or Machine Learning')
 
-tupper = Info()
-bySharpe = tupper.sort_values(by='Sharpe', ascending = False).head(10)
-byYTD = tupper.sort_values(by='YTD', ascending = False).head(10)
-byA = tupper.sort_values(by='A', ascending = False).head(10)
-by6M = tupper.sort_values(by='6M', ascending = False).head(10)
-byM = tupper.sort_values(by='M', ascending = False).head(10)
-byW = tupper.sort_values(by='W', ascending = False).head(10)
+#tupper = Info()
+#bySharpe = tupper.sort_values(by='Sharpe', ascending = False).head(10)
+#byYTD = tupper.sort_values(by='YTD', ascending = False).head(10)
+#byA = tupper.sort_values(by='A', ascending = False).head(10)
+#by6M = tupper.sort_values(by='6M', ascending = False).head(10)
+#byM = tupper.sort_values(by='M', ascending = False).head(10)
+#byW = tupper.sort_values(by='W', ascending = False).head(10)
 
-selectInfo = st.multiselect(
-    'Get some insights ',
-     ('by Sharpe','by Weekly Performance', 'by Monthly Performance', 'by 6M Performance' 'by Annual Performance','by Current Year to Date'),
-     default='by Sharpe'
-    )
+#selectInfo = st.multiselect(
+ #   'Get some insights ',
+ #    ('by Sharpe','by Weekly Performance', 'by Monthly Performance', 'by 6M Performance' 'by Annual Performance','by Current Year to Date'),
+ #    default='by Sharpe'
+ #   )
 
 
-if 'by Sharpe' in selectInfo:
-    st.dataframe(bySharpe.style.highlight_max(axis=0))
+#if 'by Sharpe' in selectInfo:
+#   st.dataframe(bySharpe.style.highlight_max(axis=0))
 
-if 'by Annual Performance' in selectInfo:
-    st.dataframe(byA.style.highlight_max(axis=0))
+#if 'by Annual Performance' in selectInfo:
+#    st.dataframe(byA.style.highlight_max(axis=0))
 
-if 'by Current Year to Date' in selectInfo:
-    st.dataframe(byYTD.style.highlight_max(axis=0))
+#if 'by Current Year to Date' in selectInfo:
+#    st.dataframe(byYTD.style.highlight_max(axis=0))
 
-if 'by Monthly Performance' in selectInfo:
-    st.dataframe(byM.style.highlight_max(axis=0))
+#if 'by Monthly Performance' in selectInfo:
+#    st.dataframe(byM.style.highlight_max(axis=0))
 
-if 'by 6M Performance' in selectInfo:
-    st.dataframe(by6M.style.highlight_max(axis=0))
+#if 'by 6M Performance' in selectInfo:
+#    st.dataframe(by6M.style.highlight_max(axis=0))
 
-if 'by Weekly Performance' in selectInfo:
-    st.dataframe(byW.style.highlight_max(axis=0))
+#if 'by Weekly Performance' in selectInfo:
+#    st.dataframe(byW.style.highlight_max(axis=0))
 
 
 st.markdown('<br>', unsafe_allow_html=True)   
