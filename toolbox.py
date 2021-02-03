@@ -121,7 +121,20 @@ def GetWeights(or_p,mv_p):
     return df
 
 
-    
+fecha = lambda x: x.strftime('%F')
+
+def Plot_Performance(df):
+    df = df / df.iloc[0]
+    df = df.reset_index()
+    df = df.melt('Date', var_name='ticker', value_name='price')
+    df['price'] = df['price'].apply(dig)
+    df['Date'] = df['Date'].apply(fecha)
+    pic = alt.Chart(df).mark_line().encode(
+        x='Date:T',
+        y='price:Q',
+        color='ticker:N', tooltip=['ticker:N', 'Date:N','price:N']
+    )
+    return pic    
 
 def Plot_P_Optimization(df):
     

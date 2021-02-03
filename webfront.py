@@ -97,26 +97,30 @@ st.markdown('<br>', unsafe_allow_html=True)
 # Performance
 st.markdown('<h1>Performance</h1><br>', unsafe_allow_html=True)
 
-#st.title('Performance')
+
 with st.beta_expander('Description: click here 👉'):
         st.write('PMT')
 
-
+st.markdown('<br>', unsafe_allow_html=True) 
 
 price = toolbox.StockData(portfolio)
 df = toolbox.Performance(price)
-st.dataframe(df.style.highlight_max(axis=0))
+
+col1, col2 = st.beta_columns(2)
+
+with col1:
+    st.markdown('<h3>Returns</h3>', unsafe_allow_html=True)
+   
+    st.dataframe(df.style.highlight_max(axis=0))
+
+with col2:
+    st.markdown('<h3>Evolution</h3>', unsafe_allow_html=True)
+#   st.dataframe(p_cluster.style.highlight_max(axis=0))
+    pic = toolbox.Plot_Performance(price)
+    st.altair_chart(pic, use_container_width=True)
 
 
-
-st.markdown('<br>', unsafe_allow_html=True)  
-
-
-
-
-
-
-st.markdown('<br>', unsafe_allow_html=True)  
+st.markdown('<br><br>', unsafe_allow_html=True)  
 
 
 # Correlations
@@ -124,13 +128,6 @@ st.title('Correlations')
 with st.beta_expander('Description'):
         st.write('Correlation, in the finance and investment studies, is a statistic that measures the degree to which two assets move in relation to each other. Correlations are used in advanced portfolio management, computed as the correlation coefficient, which has a value that must fall between -1.0 and +1.0. The closer to 0, the less correlated.')
         st.write('Diversification Index is computed with the sum of correlations of every asset in a portfolio divided by the number of assets. The closer to 0, the more diversicated is the portfolio')
-
-
-
-
-
-
-
 
 
 st.markdown('<br>', unsafe_allow_html=True)  
@@ -169,7 +166,7 @@ if 'vs Gold' in options:
     st.write('Diversification Index = ',div_index_gold)
 
 
-st.markdown('<br>', unsafe_allow_html=True)  
+st.markdown('<br><br>', unsafe_allow_html=True)  
 
 
 #Portfolio Optimization
@@ -202,7 +199,7 @@ with col3:
 
 
 
-st.markdown('<br><br><br>', unsafe_allow_html=True)  
+st.markdown('<br><br>', unsafe_allow_html=True)   
 
 
 tupper_df = Tupper()
@@ -233,7 +230,7 @@ with col2:
     
 
 
-st.markdown('<br><br><br>', unsafe_allow_html=True)  
+st.markdown('<br><br>', unsafe_allow_html=True)  
 
 #Rankings
 st.title('Rankings')
@@ -252,7 +249,7 @@ if 'US SP500' in selectInfo:
 
 
 
-st.markdown('<br><br><br>', unsafe_allow_html=True)   
+st.markdown('<br><br>', unsafe_allow_html=True)   
 Disclaimer = 'DISCLAIMER: Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are based in a mathematical model calculated with historical public information.'
 st.info(Disclaimer)
 
