@@ -65,31 +65,11 @@ def GetTupper(today):
     tk ='sl.AqjVtiREhOk_99wIg8a9ZL-wEGnwyBrdS9UA5D4xcGNSS6h2u4B0WwettlS4Oa9UKq77s1Iq5w4-26e4QPrqTkopGsnbXflkFp9x1abutjTeNXZte12vd4T9nUlws1xiuUM1Vyo'
     DBX = dropbox.Dropbox(tk)
 
-    _, read = DBX.files_download("/data/tupper_2021-02-03.csv")
+    _, read = DBX.files_download("/data/tupper.csv")
     
     with io.BytesIO(read.content) as stream:
         df = pd.read_csv(stream, index_col=0)
     return df
-
-
-# Max Sharpe with Min correlation
-def MaxSharpe_MinCorr(new_df, sharpe, asset, num):
-    sharpe = sharpe.drop(asset)    
-    max_sharpe = sharpe.sort_values(ascending = False).head(num)
-    list_max = np.array(max_sharpe.index.values)
-    porfolio_A = new_df[list_max].corrwith(new_df[asset]).abs().sort_values(ascending = True).head(9)  
-    porfolio_A = pd.Series(porfolio_A.index.values)
-    return porfolio_A
-
-# Min correlation with Max Sharpe
-def MinCorr_MaxSharpe(new_df, asset, num):
-    porfolio_B = new_df.corrwith(new_df[asset]).abs().sort_values(ascending = True).head(num)
-    new_df = new_df[porfolio_B.index.values]
-    f_sharpe = (250**0.5)*(new_df.mean()/new_df.std())    
-    f_sharpe.sort_values(ascending = False)
-    max_sharpe = f_sharpe.head(9)
-    porfolio_B = pd.Series(max_sharpe.index.values)
-    return porfolio_B
 
 
 
