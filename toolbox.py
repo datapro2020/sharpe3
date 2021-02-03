@@ -65,7 +65,7 @@ def GetTupper(today):
     tk ='sl.AqjVtiREhOk_99wIg8a9ZL-wEGnwyBrdS9UA5D4xcGNSS6h2u4B0WwettlS4Oa9UKq77s1Iq5w4-26e4QPrqTkopGsnbXflkFp9x1abutjTeNXZte12vd4T9nUlws1xiuUM1Vyo'
     DBX = dropbox.Dropbox(tk)
 
-    _, read = DBX.files_download("/tupper_"+today+".csv")
+    _, read = DBX.files_download("tupper_2021-02-03.csv")
     
     with io.BytesIO(read.content) as stream:
         df = pd.read_csv(stream, index_col=0)
