@@ -249,7 +249,7 @@ if 'US SP500' in selectInfo:
 
 
 
-st.markdown('<br><br>', unsafe_allow_html=True)   
+st.markdown('<br><br><br>', unsafe_allow_html=True)   
 Disclaimer = 'DISCLAIMER: Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are based in a mathematical model calculated with historical public information.'
 st.info(Disclaimer)
 
