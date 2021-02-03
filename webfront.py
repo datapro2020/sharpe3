@@ -210,7 +210,7 @@ tupper_df = Tupper()
 #Clustering
 st.title('Clustering')
 with st.beta_expander('Description'):
-        st.write('In Machine Learning, data can be organized unlabeled, knowed as “ unsupervised learning ”. One of the most common algoritms are K-means. K-means clustering is a part of unsupervised learning, where we were given with the unlabeled dataset and this algorithm will automatically group the data into coherent clusters ')
+        st.write('In Machine Learning, data "unlabeled" can be automaticaly organized, known as “unsupervised learning”. The K-means clustering algorithm is a part of unsupervised learning, which a given unlabeled dataset will automatically grouped into coherent clusters ')
 
 ann_mean = tupper_df.loc[:,'Return'].apply(to_float)
 #ann_mean = p_ret.append(ann_mean)
