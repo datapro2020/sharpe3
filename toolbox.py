@@ -9,12 +9,14 @@ import numpy as np
 import pandas as pd
 import pandas_datareader.data as web
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Label, LabelSet, Range1d
-import hvplot.pandas
+#from bokeh.plotting import figure
+#from bokeh.models import ColumnDataSource, Label, LabelSet, Range1d
+#import hvplot.pandas
 import altair as alt
+import io
+import dropbox
 
 #from math import sqrt
 #import  pylab as pl
@@ -56,6 +58,19 @@ def My_Corr(df1,df2):
     df = pd.concat([df1,df2],axis=1)
     df = df.pct_change().apply(lambda x: np.log(1+x)).corr()
     return df
+
+
+
+def GetTupper(today):
+    tk ='sl.AqjVtiREhOk_99wIg8a9ZL-wEGnwyBrdS9UA5D4xcGNSS6h2u4B0WwettlS4Oa9UKq77s1Iq5w4-26e4QPrqTkopGsnbXflkFp9x1abutjTeNXZte12vd4T9nUlws1xiuUM1Vyo'
+    DBX = dropbox.Dropbox(tk)
+
+    _, read = DBX.files_download("/tupper_"+today+".csv")
+    
+    with io.BytesIO(read.content) as stream:
+        df = pd.read_csv(stream, index_col=0)
+    return df
+
 
 # Max Sharpe with Min correlation
 def MaxSharpe_MinCorr(new_df, sharpe, asset, num):

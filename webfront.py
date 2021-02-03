@@ -38,12 +38,9 @@ def benchmarks():
     GOLD.columns = ['Gold SPOT']
     return US,BTC,GOLD
 
-
 @st.cache
-def Info():
-    df = pd.read_csv('data/tupper_'+now+'.csv', index_col='ticker')
-    return df
- 
+def Tupper():
+    return toolbox.GetTupper(now)
 
 
 st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True
@@ -200,51 +197,29 @@ with col3:
     st.altair_chart(toolbox.Plot_P_Optimization(p_opt), use_container_width=True)
     
 
-st.markdown('<br>', unsafe_allow_html=True)
 
 
 
-st.markdown('<br>', unsafe_allow_html=True)
+
+st.markdown('<br><br><br>', unsafe_allow_html=True)   
 
 
+#Rankings
+st.title('Rankings')
+with st.beta_expander('Description'):
+        st.write('Review metrics in every index')
 
-st.markdown('<br>', unsafe_allow_html=True)   
-#st.title('Rankings')
-#with st.beta_expander('Description'):
-        #st.write('Clustering by industry clasification or Machine Learning')
-
-#tupper = Info()
-#bySharpe = tupper.sort_values(by='Sharpe', ascending = False).head(10)
-#byYTD = tupper.sort_values(by='YTD', ascending = False).head(10)
-#byA = tupper.sort_values(by='A', ascending = False).head(10)
-#by6M = tupper.sort_values(by='6M', ascending = False).head(10)
-#byM = tupper.sort_values(by='M', ascending = False).head(10)
-#byW = tupper.sort_values(by='W', ascending = False).head(10)
-
-#selectInfo = st.multiselect(
- #   'Get some insights ',
- #    ('by Sharpe','by Weekly Performance', 'by Monthly Performance', 'by 6M Performance' 'by Annual Performance','by Current Year to Date'),
- #    default='by Sharpe'
- #   )
+tupper_df = Tupper()
 
 
-#if 'by Sharpe' in selectInfo:
-#   st.dataframe(bySharpe.style.highlight_max(axis=0))
+selectInfo = st.multiselect('Get some insights from the major stock index',
+    ('US SP500','US Nasdaq'),
+     default='US SP500'
+    )
+if 'US SP500' in selectInfo:
+    st.dataframe(tupper_df.style.highlight_max(axis=0))
 
-#if 'by Annual Performance' in selectInfo:
-#    st.dataframe(byA.style.highlight_max(axis=0))
 
-#if 'by Current Year to Date' in selectInfo:
-#    st.dataframe(byYTD.style.highlight_max(axis=0))
-
-#if 'by Monthly Performance' in selectInfo:
-#    st.dataframe(byM.style.highlight_max(axis=0))
-
-#if 'by 6M Performance' in selectInfo:
-#    st.dataframe(by6M.style.highlight_max(axis=0))
-
-#if 'by Weekly Performance' in selectInfo:
-#    st.dataframe(byW.style.highlight_max(axis=0))
 
 
 st.markdown('<br><br><br>', unsafe_allow_html=True)   
