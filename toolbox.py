@@ -62,7 +62,7 @@ def My_Corr(df1,df2):
 
 
 def GetTupper(today):
-    tk ='sl.AqjVtiREhOk_99wIg8a9ZL-wEGnwyBrdS9UA5D4xcGNSS6h2u4B0WwettlS4Oa9UKq77s1Iq5w4-26e4QPrqTkopGsnbXflkFp9x1abutjTeNXZte12vd4T9nUlws1xiuUM1Vyo'
+    tk ='88RGHg17eXoAAAAAAAAAARQqiBayIm9o3nSovtJ4IV2xBhX6odv7IaQV1qll7iyE'
     DBX = dropbox.Dropbox(tk)
 
     _, read = DBX.files_download("/data/tupper.csv")
@@ -121,6 +121,7 @@ def GetWeights(or_p,mv_p):
     return df
 
 
+    
 
 def Plot_P_Optimization(df):
     
@@ -130,7 +131,7 @@ def Plot_P_Optimization(df):
     df['Volatility'] = df['Volatility'].apply(to_float)
     
     points = alt.Chart(df).mark_point().encode(alt.X('Volatility:Q',scale=alt.Scale(zero=False)
-    ),y='Return:Q')
+    ),y='Return:Q', color='index:N', tooltip=['index:N', 'Volatility:N','Return:N'])
     
     text = points.mark_text(align='left',baseline='middle',dx=7).encode(text='index')
     
@@ -143,16 +144,14 @@ def Clustering(ann_mean, ann_std):
         ret_var.columns = ["Return","Volatility"]
 
         X =  ret_var.values #Converting ret_var into nummpy arraysse = []for k in range(2,15):
-
-        #pl.scatter(X[:,1],X[:,0], c = kmeans.labels_, cmap ="rainbow")
-        #plt.scatter(centroids[:,1],centroids[:,0], marker = 'x', color = 'b', label = 'Centroids')
+        df = pd.DataFrame(X, index=ret_var.index, columns=['Return','Volatility'])
+ 
         kmeans = KMeans(n_clusters = 5).fit(X)
-        #centroids = kmeans.cluster_centers_
-        #Company = pd.DataFrame(ret_var.index)
+        centroids = kmeans.cluster_centers_
         cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Clustering'])
-        #tupper = pd.concat([tupper, cluster_labels],axis = 1)
+        df = pd.concat([df, cluster_labels],axis = 1)
         print ('Builing Clustering with the ML Library K-Means') 
-        return cluster_labels
+        return df
     
 #Performace for each stock
 def Performance(p):
@@ -207,5 +206,5 @@ def Core_Calculations(portfolio, price):
     df['Return'] = df['Return'].apply(pct)
     df['Volatility'] = df['Volatility'].apply(pct)
 
-    return df, optimal_risky_port, min_vol_port
+    return df, optimal_risky_port, min_vol_port, ann_mean, ann_std
 

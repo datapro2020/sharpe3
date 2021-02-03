@@ -19,6 +19,7 @@ import altair as alt
 
 
 dig = lambda x: '{:.2f}'.format(x)
+to_float = lambda x: float(x.strip('%'))/100
 
 US_index = ['^GSPC','^IXIC']
 gold = 'GC=F'
@@ -174,7 +175,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 #Portfolio Optimization
 st.title('Portfolio Optimization')
 
-p_opt,or_p, mv_p = toolbox.Core_Calculations(portfolio,price)
+p_opt,or_p, mv_p, p_ret, p_vol = toolbox.Core_Calculations(portfolio,price)
 
 with st.beta_expander('Description'):
         st.write('Modern Portfolio Theory, or also known as mean-variance analysis is a mathematical process which allows the user to maximize returns for a given risk level')
@@ -183,17 +184,17 @@ with st.beta_expander('Description'):
 col1, col2, col3 = st.beta_columns(3)
 
 with col1:
-    st.header("Risk/Reward table")
+    st.markdown('<h3>Risk/Reward table</h3>', unsafe_allow_html=True)
     st.dataframe(p_opt.style.highlight_max(axis=0))
 
 with col2:
-    st.header("Weights")
+    st.markdown('<h3>Weights</h3>', unsafe_allow_html=True)
     df = toolbox.GetWeights(or_p, mv_p)
     df = df.applymap(dig)
     st.dataframe(df.style.highlight_max(axis=0))
 
 with col3:
-    st.header("Risk/Reward chart")
+    st.markdown('<h3>Risk/Reward chart</h3>', unsafe_allow_html=True)
     st.altair_chart(toolbox.Plot_P_Optimization(p_opt), use_container_width=True)
     
 
@@ -201,15 +202,44 @@ with col3:
 
 
 
-st.markdown('<br><br><br>', unsafe_allow_html=True)   
+st.markdown('<br><br><br>', unsafe_allow_html=True)  
 
+
+tupper_df = Tupper()
+
+#Clustering
+st.title('Clustering')
+with st.beta_expander('Description'):
+        st.write('In Machine Learning, data can be organized unlabeled, knowed as “ unsupervised learning ”. One of the most common algoritms are K-means. K-means clustering is a part of unsupervised learning, where we were given with the unlabeled dataset and this algorithm will automatically group the data into coherent clusters ')
+
+ann_mean = tupper_df.loc[:,'Return'].apply(to_float)
+#ann_mean = p_ret.append(ann_mean)
+ann_std =  tupper_df.loc[:,'Volatility'].apply(to_float)
+#ann_std =  ann_std.append(ann_mean)
+k_means = toolbox.Clustering(ann_mean,ann_std)
+#p_cluster = k_means[portfolio]
+k_means = k_means.reset_index()
+pic = alt.Chart(k_means).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N'])
+
+col1, col2 = st.beta_columns(2)
+
+with col1:
+    st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
+    st.altair_chart(pic, use_container_width=True)
+
+with col2:
+    st.markdown('<h3>Porfolio clusters</h3>', unsafe_allow_html=True)
+#    st.dataframe(p_cluster.style.highlight_max(axis=0))
+    
+
+
+st.markdown('<br><br><br>', unsafe_allow_html=True)  
 
 #Rankings
 st.title('Rankings')
 with st.beta_expander('Description'):
         st.write('Review metrics in every index')
 
-tupper_df = Tupper()
 
 
 selectInfo = st.multiselect('Get some insights from the major stock index',
