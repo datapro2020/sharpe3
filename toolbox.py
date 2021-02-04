@@ -62,7 +62,7 @@ def My_Corr(df1,df2):
 
 
 def GetTupper(today):
-    tk ='88RGHg17eXoAAAAAAAAAARQqiBayIm9o3nSovtJ4IV2xBhX6odv7IaQV1qll7iyE'
+    tk ='RTcoTOQ9iNYAAAAAAAAAAVw28-EDqP_yRVaXZ_H_l5oIDFAjrjujrWSxMSxAukVR'
     DBX = dropbox.Dropbox(tk)
 
     _, read = DBX.files_download("/data/tupper.csv")
