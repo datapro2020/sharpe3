@@ -242,7 +242,7 @@ with col2:
         if k_means.index.str.match(i).any() == True:
             st.write(i+' is within the cluster ', k_means.loc[i,'Clustering'])
         else:
-            st.write(i +' has no Data in-memory, so cluster is not localized')
+            st.write(i +' has no Data in-memory. Cluster not localized')
 
    
 
