@@ -233,7 +233,7 @@ with col1:
     st.altair_chart(pic, use_container_width=True)
 
 with col2:
-    st.markdown('<h3>Porfolio clusters</h3>', unsafe_allow_html=True)
+    st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)
 #    st.dataframe(p_cluster.style.highlight_max(axis=0))
     
 
