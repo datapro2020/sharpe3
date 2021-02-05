@@ -212,9 +212,9 @@ st.title('Clustering')
 with st.beta_expander('Description'):
         st.write('In Machine Learning, data "unlabeled" can be automaticaly organized, known as “unsupervised learning”. The K-means clustering algorithm is a part of unsupervised learning, which a given unlabeled dataset will automatically grouped into coherent clusters ')
 
-ann_mean = tupper_df.loc[:,'Return'].apply(to_float)
+ann_mean = tupper_df.loc[:,'Return']
 #ann_mean = p_ret.append(ann_mean)
-ann_std =  tupper_df.loc[:,'Volatility'].apply(to_float)
+ann_std =  tupper_df.loc[:,'Volatility']
 #ann_std =  ann_std.append(ann_mean)
 
 #df1 = tupper.iloc[:,[0,1]]
@@ -222,9 +222,10 @@ ann_std =  tupper_df.loc[:,'Volatility'].apply(to_float)
 #df = toolbox.Join_Df(df1,df2)
 #k_means = toolbox.Clustering(df.iloc[:,0],df.iloc[:,1])
 k_means = toolbox.Clustering(ann_mean,ann_std)
+
 #p_cluster = k_means[portfolio]
-k_means = k_means.reset_index()
-pic = alt.Chart(k_means).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N'])
+k_means_pic = k_means.reset_index()
+pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N'])
 
 col1, col2 = st.beta_columns(2)
 
@@ -236,7 +237,13 @@ with col2:
     st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)
 #    st.dataframe(p_cluster.style.highlight_max(axis=0))
     
+    for i in portfolio:
+        if k_means.index.str.match(i).any() == True:
+            st.write(i, 'is within the cluster ', k_means.loc[i,'Clustering'])
+        else:
+            st.write(i , ' has no Data in-memory, so cluster is not localized')
 
+   
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
 
