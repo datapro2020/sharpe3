@@ -232,6 +232,7 @@ col1, col2 = st.beta_columns(2)
 with col1:
     st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
     st.altair_chart(pic, use_container_width=True)
+    st.write('Dataset of ',len(tupper_df.index.array))
 
 with col2:
     st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)
@@ -239,9 +240,9 @@ with col2:
     
     for i in portfolio:
         if k_means.index.str.match(i).any() == True:
-            st.write(i, 'is within the cluster ', k_means.loc[i,'Clustering'])
+            st.write(i+' is within the cluster ', k_means.loc[i,'Clustering'])
         else:
-            st.write(i , ' has no Data in-memory, so cluster is not localized')
+            st.write(i +' has no Data in-memory, so cluster is not localized')
 
    
 
