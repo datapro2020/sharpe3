@@ -164,8 +164,8 @@ def Clustering(ann_mean, ann_std):
         kmeans = KMeans(n_clusters = 5).fit(X)
         centroids = kmeans.cluster_centers_
         cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Clustering'])
-        df = pd.concat([df, cluster_labels],axis = 1)
-        print ('Builing Clustering with the ML Library K-Means') 
+        df = pd.concat([df, cluster_labels],axis = 1) 
+        df.index.name = 'ticker'
         return df
     
 #Performace for each stock
@@ -187,10 +187,8 @@ def Join_Df(df1, df2):
     for i in df2.index:
         if df1.index.str.match(i).any()== True:
             df1.loc[i,:] = df2.loc[i,:]
-            print (i)
         else:
             df1 = df1.append(df2.loc[i,:])
-            print(i)
     return df1
 
 def Core_Calculations(portfolio, price):
