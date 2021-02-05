@@ -35,13 +35,13 @@ def benchmarks():
     US.columns = ['SP500','Nasdaq']
     BTC = toolbox.StockData(bitcoin)
     BTC.columns = ['Bitcoin']
-    GOLD = toolbox.StockData(gold)
-    GOLD.columns = ['Gold SPOT']
-    return US,BTC,GOLD
+    #GOLD = toolbox.StockData(gold)
+    #GOLD.columns = ['Gold SPOT']
+    return US,BTC
 
 @st.cache
 def Tupper():
-    return toolbox.GetTupper(now)
+    return toolbox.GetTupper()
 
 
 st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True
@@ -139,7 +139,7 @@ options = st.multiselect(
      default='Portfolio'
     )
 
-US,BTC,GOLD = benchmarks()
+US,BTC = benchmarks()
 
 if 'Portfolio' in options:
     corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
@@ -159,11 +159,11 @@ if 'vs Bitcoin' in options:
     st.dataframe(corrBTC.style.highlight_min(axis=0))
     st.write('Diversification Index = ',div_index_btc)
 
-if 'vs Gold' in options:
-    corrGOLD = toolbox.My_Corr(price,GOLD)
-    div_index_btc = dig(abs(corrGOLD.iloc[:,0].sum()-1)/(len(corrGOLD.index)))
-    st.dataframe(corrGOLD.style.highlight_min(axis=0))
-    st.write('Diversification Index = ',div_index_gold)
+#if 'vs Gold' in options:
+ #   corrGOLD = toolbox.My_Corr(price,GOLD)
+  #  div_index_btc = dig(abs(corrGOLD.iloc[:,0].sum()-1)/(len(corrGOLD.index)))
+   # st.dataframe(corrGOLD.style.highlight_min(axis=0))
+    #st.write('Diversification Index = ',div_index_gold)
 
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
@@ -203,6 +203,9 @@ st.markdown('<br><br>', unsafe_allow_html=True)
 
 
 tupper_df = Tupper()
+#tupper.iloc[:,0]=tupper.iloc[:,0].apply(to_float)
+#tupper.iloc[:,1]=tupper.iloc[:,1].apply(to_float)
+
 
 #Clustering
 st.title('Clustering')
@@ -213,6 +216,11 @@ ann_mean = tupper_df.loc[:,'Return'].apply(to_float)
 #ann_mean = p_ret.append(ann_mean)
 ann_std =  tupper_df.loc[:,'Volatility'].apply(to_float)
 #ann_std =  ann_std.append(ann_mean)
+
+#df1 = tupper.iloc[:,[0,1]]
+#df2 = pd.concat([p_ret, p_vol],axis = 1)
+#df = toolbox.Join_Df(df1,df2)
+#k_means = toolbox.Clustering(df.iloc[:,0],df.iloc[:,1])
 k_means = toolbox.Clustering(ann_mean,ann_std)
 #p_cluster = k_means[portfolio]
 k_means = k_means.reset_index()

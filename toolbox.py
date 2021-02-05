@@ -61,8 +61,10 @@ def My_Corr(df1,df2):
 
 
 
-def GetTupper(today):
-    tk ='RTcoTOQ9iNYAAAAAAAAAAVw28-EDqP_yRVaXZ_H_l5oIDFAjrjujrWSxMSxAukVR'
+def GetTupper():
+    
+    tk ='5-UkyaE_0XoAAAAAAAAAAb-BCtdL-qKmMTbSNOKdSSXwxA5hFBjrERMGyHcjInpW'
+    
     DBX = dropbox.Dropbox(tk)
 
     _, read = DBX.files_download("/data/tupper.csv")
@@ -180,7 +182,16 @@ def Performance(p):
     return perform
 
 
-
+#df1 in from Tupper. df2 is from input
+def Join_Df(df1, df2):
+    for i in df2.index:
+        if df1.index.str.match(i).any()== True:
+            df1.loc[i,:] = df2.loc[i,:]
+            print (i)
+        else:
+            df1 = df1.append(df2.loc[i,:])
+            print(i)
+    return df1
 
 def Core_Calculations(portfolio, price):
 
