@@ -29,7 +29,7 @@ now = datetime.now()
 now = now.strftime('%F')
 
 # Getting the main stock index as for benchmarking 
-@st.cache
+@st.cache(ttl=3600)
 def benchmarks():
     US = toolbox.StockData(US_index)
     US.columns = ['SP500','Nasdaq']
@@ -39,7 +39,7 @@ def benchmarks():
     #GOLD.columns = ['Gold SPOT']
     return US,BTC
 
-@st.cache
+@st.cache(ttl=3600)
 def Tupper():
     return toolbox.GetTupper()
 
@@ -236,7 +236,7 @@ col1, col2 = st.beta_columns(2)
 with col1:
     st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
     st.altair_chart(pic, use_container_width=True)
-    st.write('Dataset of ',len(tupper_df.index.array))
+    st.write('Dataset of ',len(tupper_df.index.array),'public listed companies in the US with more of $2B market cap')
 
 with col2:
     st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)

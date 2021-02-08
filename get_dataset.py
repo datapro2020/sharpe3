@@ -31,7 +31,7 @@ sp500 = np.array(sp500_symbols['Symbol'], )
 
 price, volume = StockData(sp500,start_date,end_date )
 
-#Cleaning data
+#Cleaning data. Droping Columns
 price = price.dropna(axis=1, how='all')
 volume = volume.dropna(axis=1, how='all')
 
