@@ -165,7 +165,6 @@ def Clustering(ann_mean, ann_std):
         centroids = kmeans.cluster_centers_
         cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Clustering'])
         df = pd.concat([df, cluster_labels],axis = 1) 
-        df.index.name = 'ticker'
         return df
     
 #Performace for each stock

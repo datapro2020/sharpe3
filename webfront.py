@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 import altair as alt
 
 
-
+pct = lambda x: '{:.2%}'.format(x)
 dig = lambda x: '{:.2f}'.format(x)
 to_float = lambda x: float(x.strip('%'))/100
 
@@ -42,6 +42,10 @@ def benchmarks():
 @st.cache(ttl=3600)
 def Tupper():
     return toolbox.GetTupper()
+
+@st.cache(ttl=3600)
+def My_Cluster(ann_mean, ann_std):
+    return toolbox.Clustering(ann_mean,ann_std)
 
 
 st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True
@@ -224,17 +228,24 @@ ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 #df2 = pd.concat([p_ret, p_vol],axis = 1)
 #df = toolbox.Join_Df(df1,df2)
 #k_means = toolbox.Clustering(df.iloc[:,0],df.iloc[:,1])
-k_means = toolbox.Clustering(ann_mean,ann_std)
+#k_means = toolbox.Clustering(ann_mean,ann_std)
+k_means = My_Cluster(ann_mean,ann_std)
+k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry']], left_index=True, right_index=True)
+k_means.index.name = 'ticker'
 
-#p_cluster = k_means[portfolio]
+#k_means['Volatility'] = k_means['Volatility'].apply(pct)
+#k_means['Return'] = k_means['Return'].apply(pct)
 k_means_pic = k_means.reset_index()
-pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N'])
+
+pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N'])
+
+
 
 col1, col2 = st.beta_columns(2)
 
 with col1:
     st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
-    st.altair_chart(pic, use_container_width=True)
+    #st.altair_chart(pic, use_container_width=True)
     st.write('Dataset of ',len(tupper_df.index.array),'public listed companies in the US over $2B market cap')
 
 with col2:
@@ -244,8 +255,50 @@ with col2:
     for i in portfolio:
         st.write(i+' is within the cluster ', k_means.loc[i,'Clustering'])
 
+#st.write(k_means[k_means['Clustering']==0].head(3))
 
-   
+st.altair_chart(pic, use_container_width=True)
+
+tupper = pd.merge(k_means['Clustering'], tupper_df, left_index=True, right_index=True)
+tupper = pd.DataFrame(tupper, columns=['Clustering','Name','Country','Sector','Industry','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
+
+cluster_view = st.multiselect(
+    'Discover other stocks in each cluster and filter',
+    ('by Maximum Return','by Maximum Sharpe', 'by Weekly Return', 'by Montly Return'),
+    default='by Maximum Return'
+    )
+
+
+if 'by Maximum Return' in cluster_view:
+    st.write(tupper[tupper['Clustering']==0].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==1].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==2].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==3].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==4].sort_values(by='Return', ascending = False).head(3))
+
+if 'by Maximum Sharpe' in cluster_view:
+    st.write(tupper[tupper['Clustering']==0].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==1].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==2].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==3].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==4].sort_values(by='Sharpe', ascending = False).head(3))
+
+if 'by Weekly Return' in cluster_view:
+    st.write(tupper[tupper['Clustering']==0].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==1].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==2].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==3].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==4].sort_values(by='W', ascending = False).head(3))
+
+if 'by Montly Return' in cluster_view:
+    st.write(tupper[tupper['Clustering']==0].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==1].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==2].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==3].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Clustering']==4].sort_values(by='M', ascending = False).head(3))
+
+
+
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
 
