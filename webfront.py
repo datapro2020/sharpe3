@@ -220,7 +220,6 @@ with st.beta_expander('Description'):
 ann_mean = p_ret.combine_first(tupper_df.loc[:,'Return'])
 ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 
-print (ann_mean)
 #df1 = tupper.iloc[:,[0,1]]
 #df2 = pd.concat([p_ret, p_vol],axis = 1)
 #df = toolbox.Join_Df(df1,df2)
@@ -236,7 +235,7 @@ col1, col2 = st.beta_columns(2)
 with col1:
     st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
     st.altair_chart(pic, use_container_width=True)
-    st.write('Dataset of ',len(tupper_df.index.array),'public listed companies in the US with more of $2B market cap')
+    st.write('Dataset of ',len(tupper_df.index.array),'public listed companies in the US over $2B market cap')
 
 with col2:
     st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)
