@@ -230,15 +230,18 @@ ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 #k_means = toolbox.Clustering(df.iloc[:,0],df.iloc[:,1])
 #k_means = toolbox.Clustering(ann_mean,ann_std)
 k_means = My_Cluster(ann_mean,ann_std)
-k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry']], left_index=True, right_index=True)
+k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']], left_index=True, right_index=True)
 k_means.index.name = 'ticker'
 
-#k_means['Volatility'] = k_means['Volatility'].apply(pct)
-#k_means['Return'] = k_means['Return'].apply(pct)
 k_means_pic = k_means.reset_index()
 
-pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N'])
 
+
+
+scales = alt.selection_interval(bind='scales')
+pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).add_selection(
+    scales
+)
 
 
 col1, col2 = st.beta_columns(2)
@@ -260,7 +263,7 @@ with col2:
 st.altair_chart(pic, use_container_width=True)
 
 tupper = pd.merge(k_means['Clustering'], tupper_df, left_index=True, right_index=True)
-tupper = pd.DataFrame(tupper, columns=['Clustering','Name','Country','Sector','Industry','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
+tupper = pd.DataFrame(tupper, columns=['Clustering','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
 
 cluster_view = st.multiselect(
     'Discover other stocks in each cluster and filter',
