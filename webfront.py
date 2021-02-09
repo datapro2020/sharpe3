@@ -48,45 +48,41 @@ def My_Cluster(ann_mean, ann_std):
     return toolbox.Clustering(ann_mean,ann_std)
 
 
-st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True
-)
+
+
+
+st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True)
 
 
 
 # Sidebar stuff
-title_side_bar = st.sidebar.markdown(
-    '<h1>Sharpe 3</h1><br>', unsafe_allow_html=True
-)
+with st.sidebar:
 
+    st.info("⚠️**BETA:** Ongoing Deployment")
 
-search_side_bar = st.sidebar.text_input(
-    'eg. TSLA,PTON,AAPL',
+    st.markdown('<h1>Sharpe 3</h1><br>', unsafe_allow_html=True)
+
+    search_side_bar = st.text_input('eg. TSLA,PTON,AAPL',
     'TSLA,PTON,AAPL'
-)
+    )
 
-button_side_bar = st.sidebar.button(
-  'Run Analytics',
-)
+    st.button('Run Analytics')
 
-progress_side_bar = st.sidebar.progress(
-    0,
-)
+    progress_side_bar = st.progress(0)
 
-for percent_complete in range(100):
-    time.sleep(0.1)
-    progress_side_bar.progress(percent_complete + 1)
+    for percent_complete in range(100):
+        time.sleep(0.1)
+        progress_side_bar.progress(percent_complete + 1)
 
 
-text_side_bar = st.sidebar.markdown(
-    '<br><br><br>', unsafe_allow_html=True
-)
-text_side_bar = st.sidebar.markdown(
+    st.markdown('<br><br><br>', unsafe_allow_html=True)
+    
+    st.markdown(
     '<b>How it works:</b><br><p>1 - Enter your portfolio. Just add the tickers with comman in the middle (see the example above) <br><br>2 - Click the button "Run Analytics". It makes 10000 mathematical calulations in less than 10seg.<p><br><br><br><br><br><br><br><br>',
     unsafe_allow_html=True
-)
+    )
 
-about_side_bar=st.sidebar.markdown('<p><a href="#about">About Sharpe 3</a></p>', unsafe_allow_html=True
-)
+    st.markdown('<p><a href="#about">About Sharpe 3</a></p>', unsafe_allow_html=True)
 
 
 
@@ -311,8 +307,9 @@ st.markdown('<br><br>', unsafe_allow_html=True)
 #Forecasting
 st.title('AI Forecasting')
 with st.beta_expander('Description'):
-        st.write('Forecasting based in historical data is no indication of whether a price will go up or down. However, the AI technology based Facebook Prophet can provide a forecasting framework for non-linear trends like the stock market. Those charts represent trends for the next 12 months, with the best case (yhat_upper) and the worse case(yhat_lower) forecast line')
+        st.write('Forecasting based in historical data is no indication of whether a price will go up or down. However, modern AI technology can provide a forecasting framework for non-linear trends like the stock market. Sharpe 3 used the Prophet open source engine developed by Facebook to automate and adapt stock forecasting. Those charts represent trends for the next 12 months, with the best case (yhat_upper) and the worse case(yhat_lower) forecast line')
 
+st.markdown('<br>', unsafe_allow_html=True)  
 
 for i in portfolio:
     st.write('Forecast for ', i)
@@ -322,7 +319,7 @@ for i in portfolio:
 
 
 st.markdown('<br><br><br>', unsafe_allow_html=True)   
-Disclaimer = 'DISCLAIMER: Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are based in a mathematical model calculated with historical public information.'
+Disclaimer = '**DISCLAIMER:** Sharpe3 provides data regarding public stock market. It does NOT recommend or advice for any investment decission.\nData showed are based in a mathematical model calculated with historical public information.'
 st.info(Disclaimer)
 
 st.markdown('<hr/><br><br><br><br>', unsafe_allow_html=True)
