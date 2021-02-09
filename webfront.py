@@ -224,13 +224,16 @@ with st.beta_expander('Description'):
 ann_mean = p_ret.combine_first(tupper_df.loc[:,'Return'])
 ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 
+
+
 #df1 = tupper.iloc[:,[0,1]]
 #df2 = pd.concat([p_ret, p_vol],axis = 1)
 #df = toolbox.Join_Df(df1,df2)
 #k_means = toolbox.Clustering(df.iloc[:,0],df.iloc[:,1])
 #k_means = toolbox.Clustering(ann_mean,ann_std)
 k_means = My_Cluster(ann_mean,ann_std)
-k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']], left_index=True, right_index=True)
+#k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']], left_index=True, right_index=False)
+k_means = k_means.combine_first(tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']])
 k_means.index.name = 'ticker'
 
 k_means_pic = k_means.reset_index()
@@ -239,7 +242,7 @@ k_means_pic = k_means.reset_index()
 
 
 scales = alt.selection_interval(bind='scales')
-pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Clustering:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).add_selection(
+pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Cluster:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).add_selection(
     scales
 )
 
@@ -256,14 +259,14 @@ with col2:
 #    st.dataframe(p_cluster.style.highlight_max(axis=0))
     
     for i in portfolio:
-        st.write(i+' is within the cluster ', k_means.loc[i,'Clustering'])
+        st.write(i+' is within the cluster ', k_means.loc[i,'Cluster'].astype(int))
 
 #st.write(k_means[k_means['Clustering']==0].head(3))
 
 st.altair_chart(pic, use_container_width=True)
 
-tupper = pd.merge(k_means['Clustering'], tupper_df, left_index=True, right_index=True)
-tupper = pd.DataFrame(tupper, columns=['Clustering','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
+tupper = pd.merge(k_means['Cluster'], tupper_df, left_index=True, right_index=True)
+tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
 
 cluster_view = st.multiselect(
     'Discover other stocks in each cluster and filter',
@@ -273,32 +276,32 @@ cluster_view = st.multiselect(
 
 
 if 'by Maximum Return' in cluster_view:
-    st.write(tupper[tupper['Clustering']==0].sort_values(by='Return', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==1].sort_values(by='Return', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==2].sort_values(by='Return', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==3].sort_values(by='Return', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==4].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='Return', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='Return', ascending = False).head(3))
 
 if 'by Maximum Sharpe' in cluster_view:
-    st.write(tupper[tupper['Clustering']==0].sort_values(by='Sharpe', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==1].sort_values(by='Sharpe', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==2].sort_values(by='Sharpe', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==3].sort_values(by='Sharpe', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==4].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='Sharpe', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='Sharpe', ascending = False).head(3))
 
 if 'by Weekly Return' in cluster_view:
-    st.write(tupper[tupper['Clustering']==0].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==1].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==2].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==3].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==4].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='W', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='W', ascending = False).head(3))
 
 if 'by Montly Return' in cluster_view:
-    st.write(tupper[tupper['Clustering']==0].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==1].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==2].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==3].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Clustering']==4].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='M', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='M', ascending = False).head(3))
 
 
 
@@ -308,12 +311,12 @@ st.markdown('<br><br>', unsafe_allow_html=True)
 #Forecasting
 st.title('AI Forecasting')
 with st.beta_expander('Description'):
-        st.write('Review metrics in every index')
+        st.write('Forecasting based in historical data is no indication of whether a price will go up or down. However, the AI technology based Facebook Prophet can provide a forecasting framework for non-linear trends like the stock market. Those charts represent trends for the next 12 months, with the best case (yhat_upper) and the worse case(yhat_lower) forecast line')
 
 
 for i in portfolio:
     st.write('Forecast for ', i)
-    pic = toolbox.Forecast(price[i])
+    pic = toolbox.Forecast(price[i],i)
     st.altair_chart(pic, use_container_width=True)
 
 

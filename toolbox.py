@@ -106,7 +106,7 @@ def P_Optimization(df):
     data = {'Returns':p_ret, 'Volatility':p_vol}
 
     for counter, symbol in enumerate(df.columns.tolist()):
-        #print(counter, symbol)
+      
         data[symbol+' weight'] = [w[counter] for w in p_weights]
 
     portfolios  = pd.DataFrame(data) #Dataframe of the 5000 portfolios created
@@ -155,7 +155,8 @@ def Plot_P_Optimization(df):
 
 
 #Forecasting based in FB Prophet
-def Forecast(df):
+def Forecast(df,ticker):
+    tit = ''+ticker
     df = df.reset_index()
     df.columns = ['ds','y']
     prophet = Prophet()
@@ -164,7 +165,7 @@ def Forecast(df):
     future = prophet.predict(future_prices)
     future = future[['ds','trend','yhat_lower','yhat_upper']]
     future = future.melt('ds', var_name='bands', value_name='price')
-    pic = alt.Chart(future).mark_line().encode(
+    pic = alt.Chart(future, title=tit).mark_line().encode(
         x='ds:T',
         y='price:Q',
         color='bands:N', tooltip=['bands:N', 'ds:N','price:N']
@@ -178,11 +179,12 @@ def Clustering(ann_mean, ann_std):
 
         X =  ret_var.values #Converting ret_var into nummpy arraysse = []for k in range(2,15):
         df = pd.DataFrame(X, index=ret_var.index, columns=['Return','Volatility'])
- 
+  
         kmeans = KMeans(n_clusters = 5).fit(X)
         centroids = kmeans.cluster_centers_
-        cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Clustering'])
+        cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Cluster'])
         df = pd.concat([df, cluster_labels],axis = 1) 
+       
         return df
     
 #Performace for each stock
