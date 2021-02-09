@@ -305,20 +305,16 @@ if 'by Montly Return' in cluster_view:
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
 
-#Rankings
-st.title('Rankings')
+#Forecasting
+st.title('AI Forecasting')
 with st.beta_expander('Description'):
         st.write('Review metrics in every index')
 
 
-
-selectInfo = st.multiselect('Get some insights from the major stock index',
-    ('US SP500','US Nasdaq'),
-     default='US SP500'
-    )
-if 'US SP500' in selectInfo:
-    st.dataframe(tupper_df.style.highlight_max(axis=0))
-
+for i in portfolio:
+    st.write('Forecast for ', i)
+    pic = toolbox.Forecast(price[i])
+    st.altair_chart(pic, use_container_width=True)
 
 
 

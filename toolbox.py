@@ -17,6 +17,7 @@ from sklearn.cluster import KMeans
 import altair as alt
 import io
 import dropbox
+from fbprophet import Prophet 
 
 #from math import sqrt
 #import  pylab as pl
@@ -152,6 +153,23 @@ def Plot_P_Optimization(df):
     
     return points + text
 
+
+#Forecasting based in FB Prophet
+def Forecast(df):
+    df = df.reset_index()
+    df.columns = ['ds','y']
+    prophet = Prophet()
+    prophet.fit(df)
+    future_prices=prophet.make_future_dataframe(periods=365)
+    future = prophet.predict(future_prices)
+    future = future[['ds','trend','yhat_lower','yhat_upper']]
+    future = future.melt('ds', var_name='bands', value_name='price')
+    pic = alt.Chart(future).mark_line().encode(
+        x='ds:T',
+        y='price:Q',
+        color='bands:N', tooltip=['bands:N', 'ds:N','price:N']
+    )
+    return pic
 
 #K-Means Clustering
 def Clustering(ann_mean, ann_std):
