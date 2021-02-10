@@ -15,7 +15,7 @@ import time
 import toolbox
 from datetime import datetime, timedelta
 import altair as alt
-#from streamlit_disqus import st_disqus
+
 
 
 pct = lambda x: '{:.2%}'.format(x)
@@ -49,11 +49,11 @@ def My_Cluster(ann_mean, ann_std):
     return toolbox.Clustering(ann_mean,ann_std)
 
 
-#st_disqus("streamlit-disqus-demo")
+
 
 
 st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True)
-st.write('Analisys generated on ',now)
+st.write('Collecting and analyzing data on ',now)
 
 
 # Sidebar stuff
@@ -109,20 +109,24 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 price = toolbox.StockData(portfolio)
 df = toolbox.Performance(price)
+df = df.fillna(0)
 
 col1, col2 = st.beta_columns(2)
 
 with col1:
     st.markdown('<h3>Returns</h3>', unsafe_allow_html=True)
    
-    st.dataframe(df.style.highlight_max(axis=0))
+    st.dataframe(df.style.highlight_min(axis=0))
 
+  
 with col2:
-    st.markdown('<h3>Evolution</h3>', unsafe_allow_html=True)
-#   st.dataframe(p_cluster.style.highlight_max(axis=0))
-    pic = toolbox.Plot_Performance(price)
-    st.altair_chart(pic, use_container_width=True)
+    pic2 = toolbox.Plot_Performance2(df)
+    st.altair_chart(pic2, use_container_width=True)
+    
 
+st.markdown('<h3>Evolution</h3>', unsafe_allow_html=True)
+pic1 = toolbox.Plot_Performance1(price)
+st.altair_chart(pic1, use_container_width=True)
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
 
@@ -334,14 +338,11 @@ with st.beta_expander('About Us',expanded=True):
     st.markdown('<p> Every stock deccision is in a permanend cross-road. In one direcction, there is a lot of "hype" and misinformation for trendy assets. In other direcctions, an universe of data based mathematical and statistical models, known as a Quantitative analysis (QA), complex to understand.</p>', unsafe_allow_html=True)
     st.markdown('<p>Sharpe 3 help individual investors to discover valuable data to complement every investment action.', unsafe_allow_html=True)
 
-
-
 st.markdown('<h2 id="privacy">_</h2>', unsafe_allow_html=True)
 with st.beta_expander('Privacy',expanded=False):     
     st.markdown('<p> Sharpe 3 provides clarity to simplify data driven investment deccisions. <br>Based in a Machine Leraning and data analytics technology, the Sharpe 3 platform can proccess thousands of calculations and data points to present a new perpective of stock assets. </p>', unsafe_allow_html=True)
     st.markdown('<p> Every stock deccision is in a permanend cross-road. In one direcction, there is a lot of "hype" and misinformation for trendy assets. In other direcctions, an universe of data based mathematical and statistical models, known as a Quantitative analysis (QA), complex to understand.</p>', unsafe_allow_html=True)
     st.markdown('<p>Sharpe 3 help individual investors to discover valuable data to complement every investment action', unsafe_allow_html=True)
-
 
 st.markdown('<h2 id="terms">_</h2>', unsafe_allow_html=True)
 with st.beta_expander('Terms of Use',expanded=False):     

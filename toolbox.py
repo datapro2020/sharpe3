@@ -127,7 +127,7 @@ def GetWeights(or_p,mv_p):
 
 fecha = lambda x: x.strftime('%F')
 
-def Plot_Performance(df):
+def Plot_Performance1(df):
     df = df / df.iloc[0]
     df = df.reset_index()
     df = df.melt('Date', var_name='ticker', value_name='price')
@@ -139,6 +139,26 @@ def Plot_Performance(df):
         color='ticker:N', tooltip=['ticker:N', 'Date:N','price:N']
     )
     return pic    
+
+def Plot_Performance2(df):
+
+    df = df.reset_index()
+
+    df = df.melt('ticker', var_name='window', value_name='performance')
+    df['performance'] = df['performance'].apply(to_float).apply(dig)
+
+    selection = alt.selection_multi(fields=['ticker'], bind='legend')
+
+    pic = alt.Chart(df).mark_area(opacity=0.3).encode(
+        alt.X('window:O', sort=['D','W','M','3M','6M','A','YTD']),
+        alt.Y('performance:Q',stack="normalize"),
+        color='ticker:N',
+        tooltip=['ticker:N', 'window:N','performance:O'],
+        opacity=alt.condition(selection, alt.value(1), alt.value(0.2))).properties(height=400, width=400).add_selection(
+        selection)
+
+
+    return pic
 
 def Plot_P_Optimization(df):
     
@@ -199,6 +219,7 @@ def Performance(p):
     
     df = p.resample('Y').last().pct_change().tail(1)
     perform['YTD'] = df.iloc[0,:].apply(pct)
+    perform.index.name = 'ticker'
     return perform
 
 
