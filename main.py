@@ -1,14 +1,21 @@
 import numpy as np
 import pandas as pd
 import pandas_datareader.data as web
-from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from datetime import datetime, timedelta
 from math import sqrt
 import  pylab as pl
+import altair as alt
+import io
+import dropbox
+import time
 
 D = 400
 rf = 0 #Risk free return
+
+tk = '5-UkyaE_0XoAAAAAAAAAAb-BCtdL-qKmMTbSNOKdSSXwxA5hFBjrERMGyHcjInpW'
+DBX = dropbox.Dropbox(tk)
 
 date_D_days_ago = datetime.now() - timedelta(days=D)
 now = datetime.now()
@@ -19,8 +26,44 @@ end_date = now.strftime('%F')
 #Fortmat output
 pct = lambda x: '{:.2%}'.format(x)
 dig = lambda x: '{:.2f}'.format(x)
+to_float = lambda x: float(x.strip('%'))/100
+custom_date_parser = lambda x: datetime.strptime(x,"%Y-%m-%d")
 
 
+#Get Data from Yahoo
+def StockData(ticker, start_d, end_d):
+    data = web.get_data_yahoo(ticker, start = start_d, end = end_d)
+    price =  pd.DataFrame(data['Adj Close'])
+    
+    #volume = pd.DataFrame(data['Volume'])
+    return price
+
+#Get price from listed US stocks 
+def PriceDataSet():
+    exchange = ['nasdaq','nyse','amex']
+
+    df_nasdaq = GetFile(exchange[0])
+    df_nyse = GetFile(exchange[1])
+    df_amex = GetFile(exchange[2])
+    df = df_nasdaq.append(df_nyse).append(df_amex)  
+
+    df.index = df.index.astype('str')
+
+    # Replace tickers with "." with no info
+    df = df[df.index.str.contains("\.",) == False]
+    df = df[df.index.str.contains("\/",) == False]
+
+    ticker = np.array(df.index)
+
+    price1 = StockData(ticker[:1000], start_date, end_date)
+    price2 = StockData(ticker[1001:], start_date, end_date)
+    price =pd.concat([price1, price2], axis=1)
+    price = price.dropna(axis=1, how='all')
+    
+    PostFile(price,'price')
+    #price.to_csv('../data/price.csv', index = 'date')
+    return df
+    
 # Max Sharpe with Min correlation
 def MaxSharpe_MinCorr(new_df, sharpe, asset, num):
     sharpe = sharpe.drop(asset)    
@@ -41,11 +84,34 @@ def MinCorr_MaxSharpe(new_df, asset, num):
     return porfolio_B
 
 
+
+
+#Download files from DBX
+def GetFile(filename):    
+    _, read = DBX.files_download("/data/"+filename+".csv")
+    
+    with io.BytesIO(read.content) as stream:
+        if filename == 'price':
+            df = pd.read_csv(stream, index_col=['Date'], parse_dates=['Date'], date_parser=custom_date_parser)
+        else:
+            df = pd.read_csv(stream, index_col=0)
+    return df
+
+
+#Upload files to DBX
+def PostFile(df,name):    
+    data = df.to_csv(index=True) # The index parameter is optional
+    db_bytes = bytes(data, 'utf8')
+ 
+    DBX.files_upload(db_bytes,"/data/"+name+".csv", mode=dropbox.files.WriteMode.overwrite)
+    return print(name+' uploaded on '+str(now))
+
+
 # Pofolio Optimization and Efficient Frontier (TO REVIEW)
 def P_Optimization(df):
     ind_er = df.pct_change().apply(lambda x: np.log(1+x)).mean().apply(lambda x: x*250)
     cov_matrix = df.pct_change().apply(lambda x: np.log(1+x)).cov()
-    corr_matrix = df.pct_change().apply(lambda x: np.log(1+x)).corr()
+    #corr_matrix = df.pct_change().apply(lambda x: np.log(1+x)).corr()
     ann_sd = df.pct_change().apply(lambda x: np.log(1+x)).std().apply(lambda x: x*np.sqrt(250))
 
     p_ret = [] # Define an empty array for portfolio returns
@@ -110,17 +176,30 @@ def Clustering(ann_mean, ann_std):
         ret_var = pd.concat([ann_mean, ann_std], axis = 1).dropna()
         ret_var.columns = ["Return","Volatility"]
 
-        X =  ret_var.values #Converting ret_var into nummpy arraysse = []for k in range(2,15):
-
+        X =  ret_var.values #Converting ret_var into nummpy arraysse = []for k in range(2,15):        
+        
+        sse = []
+        
+        for k in range(2,15):
+            kmeans = KMeans(n_clusters = k)
+            kmeans.fit(X)
+            sse.append(kmeans.inertia_) #SSE for each n_clusterspl.plot(range(2,15), sse)
+        pl.plot(range(2,15), sse)      
+        pl.title("Elbow Curve")
+        pl.show()
+        
+        
+        df = pd.DataFrame(X, index=ret_var.index, columns=['X','Y'])
+        alt.Chart(df).mark_point().encode(x='X',y='Y',shape='kmeans.labels_')
         #pl.scatter(X[:,1],X[:,0], c = kmeans.labels_, cmap ="rainbow")
         #plt.scatter(centroids[:,1],centroids[:,0], marker = 'x', color = 'b', label = 'Centroids')
         kmeans = KMeans(n_clusters = 5).fit(X)
         centroids = kmeans.cluster_centers_
-        Company = pd.DataFrame(ret_var.index)
         cluster_labels = pd.DataFrame(kmeans.labels_, index=ret_var.index, columns=['Clustering'])
         #tupper = pd.concat([tupper, cluster_labels],axis = 1)
         print ('Builing Clustering with the ML Library K-Means') 
         return cluster_labels
+    
     
 #Performace for each stock
 def Performance(p):
@@ -135,83 +214,57 @@ def Performance(p):
     perform['YTD'] = df.iloc[0,:].apply(pct)
     
     return perform
-    
-# Read industry and sectors of stock market
-info = pd.read_csv('data/S&P500-Info.csv', index_col=['Symbol'])
-info = pd.DataFrame(info)
+
+while True:
+    # Read industry and sectors of stock market
+    #info = pd.read_csv('../data/S&P500-Info.csv', index_col=['Symbol'])
+    #info = pd.DataFrame(info)
+
+    info = PriceDataSet()
+
+    #custom_date_parser = lambda x: datetime.strptime(x,"%Y-%m-%d")
+
+    price = GetFile('price')
+    #price = pd.DataFrame(price, index_col=['Date'], parse_dates=['Date'], date_parser=custom_date_parser)
+    #price = price.index_col(['Date']).date_parser(custom_date_parser)
+    #price = pd.read_csv('../data/price.csv', index_col=['Date'], parse_dates=['Date'], date_parser=custom_date_parser)
+    #price = pd.DataFrame(price)
+
+    # Read  Tickers
+    tickers = price.columns
 
 
 
-custom_date_parser = lambda x: datetime.strptime(x,"%Y-%m-%d")
-price = pd.read_csv('data/price.csv', index_col=['Date'], parse_dates=['Date'], date_parser=custom_date_parser)
-price = pd.DataFrame(price)
-
-# Read  Tickers
-tickers = price.columns
-
-
-
-# Expected annualized Return, Volatility, Correlation and Sharpe
-ann_mean = price.pct_change().apply(lambda x: np.log(1+x)).mean().apply(lambda x: x*250)
-ann_std = price.pct_change().apply(lambda x: np.log(1+x)).std().apply(lambda x: x*np.sqrt(250))
-corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
-cov  = price.pct_change().apply(lambda x: np.log(1+x)).cov()
-Sharpe = (ann_mean - rf)/ann_std
-perform_df = Performance(price)
-
-f = lambda x: '{:.2%}'.format(x)
-
-# Building Tupperware
-tupper = pd.DataFrame(ann_mean, columns=['Exp Return'], index = tickers)
-tupper ['Volatility'] = pd.DataFrame(ann_std, columns=['Volatility'])
-tupper ['Sharpe'] = pd.DataFrame(Sharpe, columns=['Sharpe'])
-tupper ['Min_Corr'] = pd.DataFrame(corr.abs().idxmin(), columns=['Min_Corr'])
-tupper ['Corr_value'] = pd.DataFrame(corr.min(), columns=['Corr_Value'])
-
-cluster_labels = Clustering(ann_mean, ann_std)
-tupper = pd.concat([tupper, cluster_labels,perform_df],axis = 1)
-
-print ('DataFrame built')  
-  
+    # Expected annualized Return, Volatility, Correlation and Sharpe
+    ann_mean = price.pct_change().apply(lambda x: np.log(1+x)).mean().apply(lambda x: x*252)
+    ann_std = price.pct_change().apply(lambda x: np.log(1+x)).std().apply(lambda x: x*np.sqrt(252))
+    corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
+    cov  = price.pct_change().apply(lambda x: np.log(1+x)).cov()
+    Sharpe = (ann_mean - rf)/ann_std
+    perform_df = Performance(price)
 
 
-portfolio_df= pd.DataFrame(0, columns = ['a0','a1','a2','a3','a4','a5','a6','a7','a8','a9'], index = tickers)                                            
-portfolio_df['a0'] = portfolio_df.index.values
 
-min_vol_port_df = pd.DataFrame(0, columns = ['mv_Returns','mv_Volatility','mv_w0','mv_w1','mv_w2','mv_w3','mv_w4','mv_w5','mv_w6','mv_w7','mv_w8','mv_w9'], index = tickers)
-optimal_risky_port_df = pd.DataFrame(0, columns = ['or_Returns','or_Volatility','or_w0','or_w1','or_w2','or_w3','or_w4','or_w5','or_w6','or_w7','or_w8','or_w9'], index = tickers)
-    
+    # Building Tupperware
+    tupper = pd.DataFrame(ann_mean, columns=['Return'], index = tickers)
+    tupper.index.name = 'ticker'
+    tupper ['Volatility'] = pd.DataFrame(ann_std, columns=['Volatility'])
+    tupper ['Sharpe'] = pd.DataFrame(Sharpe, columns=['Sharpe'])
+    tupper ['Min_Corr'] = pd.DataFrame(corr.abs().idxmin(), columns=['Min_Corr'])
+    tupper ['Corr_value'] = pd.DataFrame(corr.min(), columns=['Corr_Value'])
 
 
-#Building porfolios 
-for r in portfolio_df.index.values:
-    Test_A = MaxSharpe_MinCorr(price, Sharpe, r, 100)
-    for c in range(9):
-        portfolio_df.loc[r,'a'+str(c+1)] = Test_A[c]
-         
-ti = 0
-    
-for s in portfolio_df.index.values:
-    p = price[portfolio_df.loc[s,:]]
-    ti = ti +1
-    portfolios = P_Optimization (p)
-    min_vol_port = portfolios.loc[portfolios['Volatility'].idxmin()]
-    optimal_risky_port = portfolios.loc[((portfolios['Returns']- rf)/portfolios['Volatility']).idxmax()]
-    print('Porfolio '+str(ti)+' optimized.')
-              
-    # Plotting optimal portfolio
-    #portfolios.plot.scatter(x='Volatility', y='Returns', marker='o', s=10, alpha=0.3, grid=True, figsize=[10,10])
-    #Plot_P_Optimization(portfolios,p)
-        
-    #Saving optimal porfolios weights in a DataFrame
-    min_vol_port_df.loc[s,:]  = min_vol_port.values
-    optimal_risky_port_df.loc[s,:] = optimal_risky_port.values
-    
-   
-print('\n Porfolio creation ='+str(ti)) 
+    #cluster_labels = Clustering(ann_mean, ann_std)
+    tupper = pd.concat([tupper, perform_df],axis = 1)
 
-#Saving data
-tupper = pd.concat([tupper,info,portfolio_df,min_vol_port_df,optimal_risky_port_df], axis=1)
-tupper.to_csv('data/tupper_'+end_date+'.csv')
+    #pd.merge(df1, df2, left_index=True, right_index=True)
 
-print ('Done! /n Tupperware Data created on '+end_date)
+
+    tupper = pd.merge(tupper, info[['Name','Country','Sector','Industry','IPO Year','Market Cap']], left_index=True, right_index=True)
+
+    #Save file to DBX
+    PostFile(tupper,'tupper')
+
+    time.sleep(10800)
+
+    #tupper.to_csv('../data/tupper_'+end_date+'.csv')
