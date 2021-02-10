@@ -109,24 +109,25 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 price = toolbox.StockData(portfolio)
 df = toolbox.Performance(price)
-df = df.fillna(0)
 
 col1, col2 = st.beta_columns(2)
 
 with col1:
-    st.markdown('<h3>Returns</h3>', unsafe_allow_html=True)
-   
-    st.dataframe(df.style.highlight_min(axis=0))
+    pic1 = toolbox.Plot_Performance2(df)
+    st.markdown('<h3>1$ Return</h3>', unsafe_allow_html=True)
+    st.altair_chart(pic1, use_container_width=True)
 
-  
 with col2:
-    pic2 = toolbox.Plot_Performance2(df)
+    pic2 = toolbox.Plot_Performance1(df)
+    st.markdown('<h3>Performance contribution to the portfolio</h3>', unsafe_allow_html=True)
     st.altair_chart(pic2, use_container_width=True)
+
     
 
-st.markdown('<h3>Evolution</h3>', unsafe_allow_html=True)
-pic1 = toolbox.Plot_Performance1(price)
-st.altair_chart(pic1, use_container_width=True)
+
+
+
+
 
 st.markdown('<br><br>', unsafe_allow_html=True)  
 

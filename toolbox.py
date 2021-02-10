@@ -128,35 +128,60 @@ def GetWeights(or_p,mv_p):
 fecha = lambda x: x.strftime('%F')
 
 def Plot_Performance1(df):
-    df = df / df.iloc[0]
     df = df.reset_index()
     df = df.melt('Date', var_name='ticker', value_name='price')
     df['price'] = df['price'].apply(dig)
-    df['Date'] = df['Date'].apply(fecha)
-    pic = alt.Chart(df).mark_line().encode(
-        x='Date:T',
-        y='price:Q',
-        color='ticker:N', tooltip=['ticker:N', 'Date:N','price:N']
-    )
+    pic = alt.Chart(df).mark_area().encode(
+        x="Date:T",
+        y=alt.Y("price:Q", stack="normalize"),
+        color="ticker:N",
+        tooltip=[ 'Date:T','ticker:N','price:N']
+    ).properties(height=400, width=800)
     return pic    
 
 def Plot_Performance2(df):
 
     df = df.reset_index()
 
-    df = df.melt('ticker', var_name='window', value_name='performance')
-    df['performance'] = df['performance'].apply(to_float).apply(dig)
+    df = df.melt('Date', var_name='ticker', value_name='price')
+    df['price'] = df['price'].apply(dig)
 
-    selection = alt.selection_multi(fields=['ticker'], bind='legend')
+    nearest = alt.selection(type='single', nearest=True, on='mouseover', fields=['Date'], empty='none')
 
-    pic = alt.Chart(df).mark_area(opacity=0.3).encode(
-        alt.X('window:O', sort=['D','W','M','3M','6M','A','YTD']),
-        alt.Y('performance:Q',stack="normalize"),
+
+    line = alt.Chart(df).mark_line().encode(
+        alt.X('Date:T',),
+        alt.Y('price:Q'),
         color='ticker:N',
-        tooltip=['ticker:N', 'window:N','performance:O'],
-        opacity=alt.condition(selection, alt.value(1), alt.value(0.2))).properties(height=400, width=400).add_selection(
-        selection)
+        ).properties(height=400, width=800)
 
+
+    selectors = alt.Chart(df).mark_point().encode(
+        x='Date:T',
+        opacity=alt.value(0),
+        ).add_selection(
+        nearest
+        )
+
+    points = line.mark_point().encode(
+        opacity=alt.condition(nearest, alt.value(1), alt.value(0))
+        )
+
+    text = line.mark_text(align='left', dx=5, dy=-5).encode(
+        text=alt.condition(nearest, 'price:Q', alt.value(' '))
+        )
+
+    rules = alt.Chart(df).mark_rule(color='gray').encode(
+        x='Date:T',
+        ).transform_filter(
+        nearest
+        )
+
+    pic = alt.layer(
+        line, selectors, points, rules, text
+        ).properties(
+            width=600, height=300
+        )
 
     return pic
 
@@ -210,17 +235,8 @@ def Clustering(ann_mean, ann_std):
     
 #Performace for each stock
 def Performance(p):
-    window = ['D','W','M','3M','6M','A']
-    perform = pd.DataFrame(0, index = p.columns, columns=window)
-
-    for i in window:    
-        df = p.resample(i).last().pct_change().tail(2)
-        perform[i] = df.iloc[0,:].apply(pct) 
-    
-    df = p.resample('Y').last().pct_change().tail(1)
-    perform['YTD'] = df.iloc[0,:].apply(pct)
-    perform.index.name = 'ticker'
-    return perform
+    p =(p.resample('W').ffill().pct_change() + 1).cumprod().fillna(0)
+    return p
 
 
 #df1 in from Tupper. df2 is from input
