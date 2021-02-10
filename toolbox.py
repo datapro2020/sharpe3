@@ -17,7 +17,8 @@ from sklearn.cluster import KMeans
 import altair as alt
 import io
 import dropbox
-from fbprophet import Prophet 
+from fbprophet import Prophet
+
 
 #from math import sqrt
 #import  pylab as pl
