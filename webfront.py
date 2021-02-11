@@ -54,10 +54,21 @@ def Daily():
 
 
 
-st.markdown('<h1>Data Driven Investing</h1>', unsafe_allow_html=True)
-st.write('Collecting and analyzing data on ',now)
+
+col1, col2 = st.beta_columns(2)
 
 
+
+with col1:
+   st.markdown('## **Sharpe 3** ## Data Driven Investment')
+   st.markdown('') 
+   st.markdown('| Performance | Correlations | Optimization | Clustering| Forecasting | Insights') 
+    
+with col2:
+    st.markdown('Report generated on '+now ) 
+
+
+#--------------------------------------------------------------------
 # Sidebar stuff
 with st.sidebar:
 
@@ -100,25 +111,26 @@ portfolio = search_side_bar.split(',')
 
 st.markdown('<br>', unsafe_allow_html=True)  
 
+#--------------------------------------------------------------------
 # Performance
-st.markdown('<h1>Performance</h1><br>', unsafe_allow_html=True)
-
+st.markdown('<h1>Performance</h1>', unsafe_allow_html=True)
 
 with st.beta_expander('Description: click here 👉'):
-        st.write('PMT')
-
+        st.markdown('Performance is the number 1 metric of every investment. With tons of ratios and share prices, the most basic and important one is the return of $1 invested in every stock.')
+        st.markdown('It is important to compare with benchmarks like the S&P500 or Nasdaq Index, and watch graphicaly the impact over time of every individual performance within a specific portfolio')
 st.markdown('<br>', unsafe_allow_html=True) 
 
 price = toolbox.StockData(portfolio)
 price = price.fillna(0)
 df = toolbox.Performance(price)
-
+US, BTC = benchmarks()
 
 col1, col2 = st.beta_columns(2)
 
 with col1:
-   st.markdown('<h3>Ptst</h3>', unsafe_allow_html=True)
-
+    pic1 = toolbox.Plot_Performance3(price,US)
+    st.markdown('<h3>1$ Return vs the S&P500 and Nasdaq</h3>', unsafe_allow_html=True)
+    st.altair_chart(pic1, use_container_width=True)
 with col2:
     pic2 = toolbox.Plot_Performance1(df)
     st.markdown('<h3>Performance contribution to the portfolio</h3>', unsafe_allow_html=True)
@@ -128,24 +140,19 @@ with col2:
 
 
 
-US, BTC = benchmarks()
-
-pic1 = toolbox.Plot_Performance3(price,US)
-st.markdown('<h3>1$ Return vs the S&P500 and Nasdaq</h3>', unsafe_allow_html=True)
-st.altair_chart(pic1, use_container_width=True)
 
 
 
-st.markdown('<br><br>', unsafe_allow_html=True)  
 
+st.markdown('<br>', unsafe_allow_html=True)  
 
+#--------------------------------------------------------------------
 # Correlations
-st.title('Correlations')
-with st.beta_expander('Description'):
-        st.write('Correlation, in the finance and investment studies, is a statistic that measures the degree to which two assets move in relation to each other. Correlations are used in advanced portfolio management, computed as the correlation coefficient, which has a value that must fall between -1.0 and +1.0. The closer to 0, the less correlated.')
-        st.write('Diversification Index is computed with the sum of correlations of every asset in a portfolio divided by the number of assets. The closer to 0, the more diversicated is the portfolio')
+st.markdown('<h1>Correlations</h1>', unsafe_allow_html=True)
 
-
+with st.beta_expander('Description: click here 👉'):
+        st.markdown('Correlation, in the finance and investment studies, is a statistic that measures the degree to which two assets move in relation to each other. Correlations are used in advanced portfolio management, computed as the correlation coefficient, which has a value that must fall between -1.0 and +1.0. The closer to 0, the less correlated.')
+        st.markdown('Diversification Index is computed with the sum of correlations of every asset in a portfolio divided by the number of assets. The closer to 0, the more diversicated is the portfolio')
 st.markdown('<br>', unsafe_allow_html=True)  
 
 
@@ -161,19 +168,19 @@ if 'Portfolio' in options:
     corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
     div_index = dig(abs(corr.iloc[:,0].sum()-1)/(len(corr.index)))
     st.dataframe(corr.style.highlight_min(axis=0))
-    st.write('Diversification Index = ',div_index)
+    st.markdown('Diversification Index = '+div_index)
 
 if 'vs US index' in options:
     corrUS = toolbox.My_Corr(price,US)
     div_index_us = dig(abs(corrUS.iloc[:,0].sum()-1)/(len(corrUS.index)))
     st.dataframe(corrUS.style.highlight_min(axis=0))
-    st.write('Diversification Index = ',div_index_us)
+    st.markdown('Diversification Index = '+div_index_us)
 
 if 'vs Bitcoin' in options:
     corrBTC = toolbox.My_Corr(price,BTC)
     div_index_btc = dig(abs(corrBTC.iloc[:,0].sum()-1)/(len(corrBTC.index)))
     st.dataframe(corrBTC.style.highlight_min(axis=0))
-    st.write('Diversification Index = ',div_index_btc)
+    st.markdown('Diversification Index = '+div_index_btc)
 
 #if 'vs Gold' in options:
  #   corrGOLD = toolbox.My_Corr(price,GOLD)
@@ -182,17 +189,19 @@ if 'vs Bitcoin' in options:
     #st.write('Diversification Index = ',div_index_gold)
 
 
-st.markdown('<br><br>', unsafe_allow_html=True)  
+st.markdown('<br>', unsafe_allow_html=True)  
 
-
+#--------------------------------------------------------------------
 #Portfolio Optimization
-st.title('Portfolio Optimization')
 
-p_opt,or_p, mv_p, p_ret, p_vol = toolbox.Core_Calculations(portfolio,price)
+st.markdown('<h1>Portfolio Optimization</h1>', unsafe_allow_html=True)
 
 with st.beta_expander('Description'):
-        st.write('Modern Portfolio Theory, or also known as mean-variance analysis is a mathematical process which allows the user to maximize returns for a given risk level')
-        st.write('This concept is also closely related to "risk-return" trade-off. Sharpe is the key metric of the risk-return of every asset or portfolio combination')
+        st.markdown('Modern Portfolio Theory, or also known as mean-variance analysis is a mathematical process which allows the user to maximize returns for a given risk level')
+        st.markdown('This concept is also closely related to "risk-return" trade-off. Sharpe is the key metric of the risk-return of every asset or portfolio combination')
+st.markdown('<br>', unsafe_allow_html=True) 
+
+p_opt,or_p, mv_p, p_ret, p_vol = toolbox.Core_Calculations(portfolio,price)
 
 col1, col2, col3 = st.beta_columns(3)
 
@@ -215,24 +224,21 @@ with col3:
 
 
 
-st.markdown('<br><br>', unsafe_allow_html=True)   
+st.markdown('<br>', unsafe_allow_html=True)   
 
 
-tupper_df = Tupper()
-#tupper.iloc[:,0]=tupper.iloc[:,0].apply(to_float)
-#tupper.iloc[:,1]=tupper.iloc[:,1].apply(to_float)
+
+
 
 
 #Clustering
-st.title('Clustering')
+st.markdown('<h1>Clustering</h1>', unsafe_allow_html=True)
+
 with st.beta_expander('Description'):
-        st.write('In Machine Learning, data "unlabeled" can be automaticaly organized, known as “unsupervised learning”. The K-means clustering algorithm is a part of unsupervised learning, which a given unlabeled dataset will automatically grouped into coherent clusters ')
+        st.markdown('In Machine Learning, data "unlabeled" can be automaticaly organized, known as “unsupervised learning”. The K-means clustering algorithm is a part of unsupervised learning, which a given unlabeled dataset will automatically grouped into coherent clusters ')
+st.markdown('<br>', unsafe_allow_html=True) 
 
-#ann_mean = tupper_df.loc[:,'Return']
-#ann_mean = p_ret.append(ann_mean)
-#ann_std =  tupper_df.loc[:,'Volatility']
-#ann_std =  ann_std.append(ann_mean)
-
+tupper_df = Tupper()
 ann_mean = p_ret.combine_first(tupper_df.loc[:,'Return'])
 ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 
@@ -264,14 +270,14 @@ col1, col2 = st.beta_columns(2)
 with col1:
     st.markdown('<h3>Clustering based in K-Means</h3>', unsafe_allow_html=True)
     #st.altair_chart(pic, use_container_width=True)
-    st.write('Dataset of ',len(tupper_df.index.array),'public listed companies in the US over $2B market cap')
+    st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed companies in the US over $2B market cap')
 
 with col2:
     st.markdown('<h3>Portfolio clusters</h3>', unsafe_allow_html=True)
 #    st.dataframe(p_cluster.style.highlight_max(axis=0))
     
     for i in portfolio:
-        st.write(i+' is within the cluster ', k_means.loc[i,'Cluster'].astype(int))
+        st.markdown(i+' is within the cluster **'+k_means.loc[i,'Cluster'].astype(str)+'**')
 
 #st.write(k_means[k_means['Clustering']==0].head(3))
 
@@ -318,13 +324,13 @@ if 'by YTD Return' in cluster_view:
 
 
 
-st.markdown('<br><br>', unsafe_allow_html=True)  
+st.markdown('<br>', unsafe_allow_html=True)  
 
 #Forecasting
-st.title('AI Forecasting')
+st.markdown('<h1>AI Forecasting</h1>', unsafe_allow_html=True)
+
 with st.beta_expander('Description'):
         st.write('Forecasting based in historical data is no indication of whether a price will go up or down. However, modern AI technology can provide a forecasting framework for non-linear trends like the stock market. Sharpe 3 used the Prophet open source engine developed by Facebook to automate and adapt stock forecasting. Those charts represent trends for the next 12 months, with the best case (yhat_upper) and the worse case(yhat_lower) forecast line')
-
 st.markdown('<br>', unsafe_allow_html=True)  
 
 for i in portfolio:
@@ -336,9 +342,11 @@ for i in portfolio:
 st.markdown('<br>', unsafe_allow_html=True)  
 
 #Daily Insights
-st.title('Daily Insights')
+st.markdown('<h1>Daily Insights</h1>', unsafe_allow_html=True)
+
 with st.beta_expander('Description'):
         st.write('')
+st.markdown('<br>', unsafe_allow_html=True) 
 
 win, lose, active = Daily()
 

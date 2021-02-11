@@ -20,6 +20,7 @@ import dropbox
 from fbprophet import Prophet
 import yahoo_fin.stock_info as yf
 import json
+from pandas.io.json import json_normalize
 import requests
 import requests_html
 
@@ -206,7 +207,7 @@ def Plot_Performance3(df,us):
         strokeDash='ticker:N',
         tooltip=[ 'Date:T','ticker:N','price:N']
     ).add_selection(selection).properties(
-            width=600, height=300
+            width=800, height=400
         )
     return pic
 
@@ -247,6 +248,27 @@ def Forecast(df,ticker):
         color='bands:N', tooltip=['bands:N', 'ds:N','price:N']
     )
     return pic
+
+
+def Plot_EPS(price):
+    performance = (price.resample('W').ffill().pct_change() + 1).cumprod().fillna(0).tail(1)
+    df = pd.DataFrame(0, index= price.columns, columns =['performance','EPS'])
+    df['performance'] = performance.tail(1)
+    df['performance'] = performance.iloc[0,:]
+
+    for i in df.index:
+        EPS = yf.get_quote_table(i)
+        df.loc[i,'EPS'] = EPS["EPS (TTM)"]
+
+    df = df.reset_index()
+
+    pic = alt.Chart(df).mark_point().encode(alt.X('performance:Q',scale=alt.Scale(zero=False)
+        ),y='EPS:Q', 
+        color='Symbols:N', 
+        size=alt.Size("performance:Q", scale=alt.Scale(range=[0, 1000])), 
+        tooltip=['Symbols:N', 'performance:N','EPS:N']).roperties(height=400, width=800)
+    return pic
+
 
 #K-Means Clustering
 def Clustering(ann_mean, ann_std):
