@@ -31,7 +31,7 @@ rf = 0 #Risk free return
 pct = lambda x: '{:.2%}'.format(x)
 dig = lambda x: '{:.2f}'.format(x)
 to_float = lambda x: float(x.strip('%'))/100
-
+to_date = lambda x: x.strftime('%F')
 # Timing
 D=400
 date_D_days_ago = datetime.now() - timedelta(days=D)
@@ -128,6 +128,7 @@ def GetWeights(or_p,mv_p):
 fecha = lambda x: x.strftime('%F')
 
 def Plot_Performance1(df):
+  
     df = df.reset_index()
     df = df.melt('Date', var_name='ticker', value_name='price')
     df['price'] = df['price'].apply(dig)
@@ -180,17 +181,37 @@ def Plot_Performance2(df):
     pic = alt.layer(
         line, selectors, points, rules, text
         ).properties(
-            width=600, height=300
+            width=800, height=400
         )
 
+    return pic
+
+def Plot_Performance3(df,us):
+    df = df.join(us, how='outer')
+    df = df/df.iloc[0]
+    df = df.reset_index()
+    df = df.melt('Date', var_name='ticker', value_name='price')
+    df['price'] = df['price'].apply(dig)
+
+    selection = alt.selection_multi(fields=['ticker'], bind='legend')
+
+    pic = alt.Chart(df).mark_line().encode(
+        x='Date:T',
+        y='price:Q',
+        color='ticker:N',
+        strokeDash='ticker:N',
+        tooltip=[ 'Date:T','ticker:N','price:N']
+    ).add_selection(selection).properties(
+            width=600, height=300
+        )
     return pic
 
 def Plot_P_Optimization(df):
     
     df = df.reset_index()
     df['index'] = df['index'].apply(str)
-    df['Return'] = df['Return'].apply(to_float)
-    df['Volatility'] = df['Volatility'].apply(to_float)
+    df['Return'] = df['Return'].apply(to_float).apply(dig)
+    df['Volatility'] = df['Volatility'].apply(to_float).apply(dig)
     
     points = alt.Chart(df).mark_point().encode(alt.X('Volatility:Q',scale=alt.Scale(zero=False)
     ),y='Return:Q', color='index:N', tooltip=['index:N', 'Volatility:N','Return:N'])
@@ -210,6 +231,11 @@ def Forecast(df,ticker):
     future_prices=prophet.make_future_dataframe(periods=365)
     future = prophet.predict(future_prices)
     future = future[['ds','trend','yhat_lower','yhat_upper']]
+    future['trend'] = future['trend'].apply(dig)
+    future['yhat_lower'] = future['yhat_lower'].apply(dig)
+    future['yhat_upper'] = future['yhat_upper'].apply(dig)
+    
+
     future = future.melt('ds', var_name='bands', value_name='price')
     pic = alt.Chart(future, title=tit).mark_line().encode(
         x='ds:T',

@@ -108,14 +108,14 @@ with st.beta_expander('Description: click here 👉'):
 st.markdown('<br>', unsafe_allow_html=True) 
 
 price = toolbox.StockData(portfolio)
+price = price.fillna(0)
 df = toolbox.Performance(price)
+
 
 col1, col2 = st.beta_columns(2)
 
 with col1:
-    pic1 = toolbox.Plot_Performance2(df)
-    st.markdown('<h3>1$ Return</h3>', unsafe_allow_html=True)
-    st.altair_chart(pic1, use_container_width=True)
+   st.markdown('<h3>Ptst</h3>', unsafe_allow_html=True)
 
 with col2:
     pic2 = toolbox.Plot_Performance1(df)
@@ -126,6 +126,11 @@ with col2:
 
 
 
+US, BTC = benchmarks()
+
+pic1 = toolbox.Plot_Performance3(price,US)
+st.markdown('<h3>1$ Return vs the S&P500 and Nasdaq</h3>', unsafe_allow_html=True)
+st.altair_chart(pic1, use_container_width=True)
 
 
 
@@ -148,7 +153,7 @@ options = st.multiselect(
      default='Portfolio'
     )
 
-US,BTC = benchmarks()
+
 
 if 'Portfolio' in options:
     corr = price.pct_change().apply(lambda x: np.log(1+x)).corr()
@@ -341,14 +346,10 @@ with st.beta_expander('About Us',expanded=True):
 
 st.markdown('<h2 id="privacy">_</h2>', unsafe_allow_html=True)
 with st.beta_expander('Privacy',expanded=False):     
-    st.markdown('<p> Sharpe 3 provides clarity to simplify data driven investment deccisions. <br>Based in a Machine Leraning and data analytics technology, the Sharpe 3 platform can proccess thousands of calculations and data points to present a new perpective of stock assets. </p>', unsafe_allow_html=True)
-    st.markdown('<p> Every stock deccision is in a permanend cross-road. In one direcction, there is a lot of "hype" and misinformation for trendy assets. In other direcctions, an universe of data based mathematical and statistical models, known as a Quantitative analysis (QA), complex to understand.</p>', unsafe_allow_html=True)
-    st.markdown('<p>Sharpe 3 help individual investors to discover valuable data to complement every investment action', unsafe_allow_html=True)
+    st.markdown('<p> TBC. </p>', unsafe_allow_html=True)
 
 st.markdown('<h2 id="terms">_</h2>', unsafe_allow_html=True)
 with st.beta_expander('Terms of Use',expanded=False):     
-    st.markdown('<p> Sharpe 3 provides clarity to simplify data driven investment deccisions. <br>Based in a Machine Leraning and data analytics technology, the Sharpe 3 platform can proccess thousands of calculations and data points to present a new perpective of stock assets. </p>', unsafe_allow_html=True)
-    st.markdown('<p> Every stock deccision is in a permanend cross-road. In one direcction, there is a lot of "hype" and misinformation for trendy assets. In other direcctions, an universe of data based mathematical and statistical models, known as a Quantitative analysis (QA), complex to understand.</p>', unsafe_allow_html=True)
-    st.markdown('<p>Sharpe 3 help individual investors to discover valuable data to complement every investment action', unsafe_allow_html=True)
-
+    st.markdown('<p> TBC. </p>', unsafe_allow_html=True)
+   
 
