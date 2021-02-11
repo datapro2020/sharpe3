@@ -48,7 +48,9 @@ def Tupper():
 def My_Cluster(ann_mean, ann_std):
     return toolbox.Clustering(ann_mean,ann_std)
 
-
+@st.cache(ttl=28800)
+def Daily():
+    return toolbox.Daily_info()
 
 
 
@@ -276,12 +278,12 @@ with col2:
 st.altair_chart(pic, use_container_width=True)
 
 tupper = pd.merge(k_means['Cluster'], tupper_df, left_index=True, right_index=True)
-tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','D','W','M'])
+tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','YTD','1$performance'])
 
 cluster_view = st.multiselect(
     'Discover other stocks in each cluster and filter',
-    ('by Maximum Return','by Maximum Sharpe', 'by Weekly Return', 'by Montly Return'),
-    default='by Maximum Return'
+    ('by Maximum Expected Return (log)','by Maximum Sharpe', 'by 1$ year Performance', 'by YTD Return'),
+    default='by YTD Return'
     )
 
 
@@ -299,19 +301,19 @@ if 'by Maximum Sharpe' in cluster_view:
     st.write(tupper[tupper['Cluster']==3].sort_values(by='Sharpe', ascending = False).head(3))
     st.write(tupper[tupper['Cluster']==4].sort_values(by='Sharpe', ascending = False).head(3))
 
-if 'by Weekly Return' in cluster_view:
-    st.write(tupper[tupper['Cluster']==0].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==1].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==2].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==3].sort_values(by='W', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==4].sort_values(by='W', ascending = False).head(3))
+if 'by 1$ year Performance' in cluster_view:
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='1$performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='1$performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='1$performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='1$performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='1$performance', ascending = False).head(3))
 
-if 'by Montly Return' in cluster_view:
-    st.write(tupper[tupper['Cluster']==0].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==1].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==2].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==3].sort_values(by='M', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==4].sort_values(by='M', ascending = False).head(3))
+if 'by YTD Return' in cluster_view:
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='YTD', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='YTD', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='YTD', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='YTD', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='YTD', ascending = False).head(3))
 
 
 
@@ -330,6 +332,31 @@ for i in portfolio:
     pic = toolbox.Forecast(price[i],i)
     st.altair_chart(pic, use_container_width=True)
 
+
+st.markdown('<br>', unsafe_allow_html=True)  
+
+#Daily Insights
+st.title('Daily Insights')
+with st.beta_expander('Description'):
+        st.write('')
+
+win, lose, active = Daily()
+
+col1, col2, col3 = st.beta_columns(3)
+
+with col1:
+    st.markdown('<h3>Top5 Gainners</h3>', unsafe_allow_html=True)
+    st.dataframe(win.style.highlight_min(axis=1))
+    
+with col2:
+    st.markdown('<h3>Top5 Loosers</h3>', unsafe_allow_html=True)
+    st.dataframe(lose.style.highlight_min(axis=1))
+    
+with col3:
+    st.markdown('<h3>Top5 More Active</h3>', unsafe_allow_html=True)
+    st.dataframe(active.style.highlight_min(axis=1))
+
+st.markdown('<br>', unsafe_allow_html=True)  
 
 
 st.markdown('<br><br><br>', unsafe_allow_html=True)   

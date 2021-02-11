@@ -18,6 +18,10 @@ import altair as alt
 import io
 import dropbox
 from fbprophet import Prophet
+import yahoo_fin.stock_info as yf
+import json
+import requests
+import requests_html
 
 
 #from math import sqrt
@@ -264,6 +268,15 @@ def Performance(p):
     p =(p.resample('W').ffill().pct_change() + 1).cumprod().fillna(0)
     return p
 
+
+def Daily_info():
+    win = yf.get_day_gainers()
+    win = win.sort_values(by='Market Cap',ascending = False).head(5).sort_values(by='% Change',ascending = False)
+    lose = yf.get_day_losers()
+    lose = lose.sort_values(by='Market Cap',ascending = False).head(5).sort_values(by='% Change',ascending = True)
+    active = yf.get_day_most_active()
+    active = lose.sort_values(by='Market Cap',ascending = False).head(5)
+    return win,lose,active
 
 #df1 in from Tupper. df2 is from input
 def Join_Df(df1, df2):
