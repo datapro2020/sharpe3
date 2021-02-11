@@ -289,11 +289,11 @@ tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Indu
 cluster_view = st.multiselect(
     'Discover other stocks in each cluster and filter',
     ('by Maximum Expected Return (log)','by Maximum Sharpe', 'by 1$ year Performance', 'by YTD Return'),
-    default='by YTD Return'
+    default='by Maximum Sharpe'
     )
 
 
-if 'by Maximum Return' in cluster_view:
+if 'by Maximum Expected Return (log)' in cluster_view:
     st.write(tupper[tupper['Cluster']==0].sort_values(by='Return', ascending = False).head(3))
     st.write(tupper[tupper['Cluster']==1].sort_values(by='Return', ascending = False).head(3))
     st.write(tupper[tupper['Cluster']==2].sort_values(by='Return', ascending = False).head(3))
