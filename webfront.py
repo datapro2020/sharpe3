@@ -251,7 +251,7 @@ print(ann_mean)
 #k_means = toolbox.Clustering(ann_mean,ann_std)
 k_means = My_Cluster(ann_mean,ann_std)
 #k_means = pd.merge(k_means, tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']], left_index=True, right_index=False)
-k_means = k_means.combine_first(tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap']])
+k_means = k_means.combine_first(tupper_df[['Name','Country','Sector','Industry','IPO Year','Market Cap','performance','trend']])
 k_means.index.name = 'ticker'
 
 k_means_pic = k_means.reset_index()
@@ -284,11 +284,11 @@ with col2:
 st.altair_chart(pic, use_container_width=True)
 
 tupper = pd.merge(k_means['Cluster'], tupper_df, left_index=True, right_index=True)
-tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','YTD','1$performance'])
+tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','performance','trend','yhat_lower','yhat_upper'])
 
 cluster_view = st.multiselect(
     'Discover other stocks in each cluster and filter',
-    ('by Maximum Expected Return (log)','by Maximum Sharpe', 'by 1$ year Performance', 'by YTD Return'),
+    ('by Maximum Expected Return (log)','by Maximum Sharpe', 'by year Performance', 'by Forecast Trend'),
     default='by Maximum Sharpe'
     )
 
@@ -307,19 +307,19 @@ if 'by Maximum Sharpe' in cluster_view:
     st.write(tupper[tupper['Cluster']==3].sort_values(by='Sharpe', ascending = False).head(3))
     st.write(tupper[tupper['Cluster']==4].sort_values(by='Sharpe', ascending = False).head(3))
 
-if 'by 1$ year Performance' in cluster_view:
-    st.write(tupper[tupper['Cluster']==0].sort_values(by='1$performance', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==1].sort_values(by='1$performance', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==2].sort_values(by='1$performance', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==3].sort_values(by='1$performance', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==4].sort_values(by='1$performance', ascending = False).head(3))
+if 'by year Performance' in cluster_view:
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='performance', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='performance', ascending = False).head(3))
 
-if 'by YTD Return' in cluster_view:
-    st.write(tupper[tupper['Cluster']==0].sort_values(by='YTD', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==1].sort_values(by='YTD', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==2].sort_values(by='YTD', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==3].sort_values(by='YTD', ascending = False).head(3))
-    st.write(tupper[tupper['Cluster']==4].sort_values(by='YTD', ascending = False).head(3))
+if 'by Forecast Trend' in cluster_view:
+    st.write(tupper[tupper['Cluster']==0].sort_values(by='trend', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==1].sort_values(by='trend', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==2].sort_values(by='trend', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==3].sort_values(by='trend', ascending = False).head(3))
+    st.write(tupper[tupper['Cluster']==4].sort_values(by='trend', ascending = False).head(3))
 
 
 
