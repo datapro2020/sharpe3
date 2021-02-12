@@ -267,9 +267,27 @@ def Plot_EPS(price):
         ),y='EPS:Q', 
         color='Symbols:N', 
         size=alt.Size("performance:Q", scale=alt.Scale(range=[0, 1000])), 
-        tooltip=['Symbols:N', 'performance:N','EPS:N']).roperties(height=400, width=800)
+        tooltip=['Symbols:N', 'performance:N','EPS:N']).properties(height=400, width=800)
     return pic
 
+def Galaxy(df):
+    df.index.name='ticker'
+    df = df.reset_index()
+
+    df['performance'] = df['performance'].apply(to_float)
+    df['yhat_lower'] = df['yhat_lower'].apply(to_float)
+
+    selection = alt.selection_multi(fields=['Sector'], bind='legend')
+    scales = alt.selection_interval(bind='scales')
+    pic = alt.Chart(df).mark_point().encode(x='performance:Q',y='yhat_lower:Q',color='Sector:N',
+        size=alt.Size("Market Cap:Q", scale=alt.Scale(range=[0, 1000])),
+        opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
+        tooltip=['ticker:N', 'performance:N','trend','yhat_lower:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).properties(
+        width=800, height=800
+        ).add_selection(
+        scales
+    ).add_selection(selection)
+    return pic
 
 #K-Means Clustering
 def Clustering(ann_mean, ann_std):

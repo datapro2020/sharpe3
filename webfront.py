@@ -52,8 +52,9 @@ def My_Cluster(ann_mean, ann_std):
 def Daily():
     return toolbox.Daily_info()
 
-
-
+@st.cache(ttl=28800)
+def TodayGalaxy(df):
+    return toolbox.Galaxy(df)
 
 col1, col2 = st.beta_columns(2)
 
@@ -365,6 +366,17 @@ with col3:
     st.dataframe(active.style.highlight_min(axis=1))
 
 st.markdown('<br>', unsafe_allow_html=True)  
+
+
+#Galaxy
+st.markdown('<h1>Galaxy</h1>', unsafe_allow_html=True)
+
+with st.beta_expander('Description'):
+        st.write('')
+st.markdown('<br>', unsafe_allow_html=True) 
+
+pic = TodayGalaxy(tupper)
+st.altair_chart(pic, use_container_width=True)
 
 
 st.markdown('<br><br><br>', unsafe_allow_html=True)   
