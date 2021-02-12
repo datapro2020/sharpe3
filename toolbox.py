@@ -228,6 +228,7 @@ def Plot_P_Optimization(df):
 
 #Forecasting based in FB Prophet
 def Forecast(df,ticker):
+    df = df.fillna(0)
     tit = ''+ticker
     df = df.reset_index()
     df.columns = ['ds','y']

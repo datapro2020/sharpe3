@@ -121,7 +121,6 @@ with st.beta_expander('Description: click here 👉'):
 st.markdown('<br>', unsafe_allow_html=True) 
 
 price = toolbox.StockData(portfolio)
-price = price.fillna(0)
 df = toolbox.Performance(price)
 US, BTC = benchmarks()
 
@@ -242,7 +241,8 @@ tupper_df = Tupper()
 ann_mean = p_ret.combine_first(tupper_df.loc[:,'Return'])
 ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 
-
+print(p_ret)
+print(ann_mean)
 
 #df1 = tupper.iloc[:,[0,1]]
 #df2 = pd.concat([p_ret, p_vol],axis = 1)
