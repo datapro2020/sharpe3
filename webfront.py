@@ -63,7 +63,7 @@ col1, col2 = st.beta_columns(2)
 with col1:
    st.markdown('## **Sharpe 3** ## Data Driven Investment')
    st.markdown('') 
-   st.markdown('| Performance | Correlations | Optimization | Clustering| Forecasting | Insights') 
+   st.markdown('| Performance | Correlations | Optimization | Clustering| Forecasting | Insights | Galaxy') 
     
 with col2:
     st.markdown('Report generated on '+now ) 
@@ -242,8 +242,7 @@ tupper_df = Tupper()
 ann_mean = p_ret.combine_first(tupper_df.loc[:,'Return'])
 ann_std = p_vol.combine_first(tupper_df.loc[:,'Volatility'])
 
-print(p_ret)
-print(ann_mean)
+
 
 #df1 = tupper.iloc[:,[0,1]]
 #df2 = pd.concat([p_ret, p_vol],axis = 1)
@@ -371,9 +370,11 @@ st.markdown('<br>', unsafe_allow_html=True)
 #Galaxy
 st.markdown('<h1>Galaxy</h1>', unsafe_allow_html=True)
 
-with st.beta_expander('Description'):
-        st.write('')
+with st.beta_expander('Description: click here 👉'):
+        st.markdown('Market Analysis? Better stock discovery based in past performance (1$ evolution) and trends (Forecast AI worse case line). To interpret the chart, the more an stock in the right, the higher past performance.And the upper of a stock, the higher trend performance. Interact with the chart and filter by sector and zoom in. ')
 st.markdown('<br>', unsafe_allow_html=True) 
+
+st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed companies in the US over $2B market cap')
 
 pic = TodayGalaxy(tupper)
 st.altair_chart(pic, use_container_width=True)

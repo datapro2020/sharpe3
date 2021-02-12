@@ -276,13 +276,14 @@ def Galaxy(df):
 
     df['performance'] = df['performance'].apply(to_float)
     df['yhat_lower'] = df['yhat_lower'].apply(to_float)
+    df['Sharpe'] = df['Sharpe'].apply(dig)
 
     selection = alt.selection_multi(fields=['Sector'], bind='legend')
     scales = alt.selection_interval(bind='scales')
     pic = alt.Chart(df).mark_point().encode(x='performance:Q',y='yhat_lower:Q',color='Sector:N',
         size=alt.Size("Market Cap:Q", scale=alt.Scale(range=[0, 1000])),
         opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
-        tooltip=['ticker:N', 'performance:N','trend','yhat_lower:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).properties(
+        tooltip=['ticker:N', 'Sharpe','performance:N','trend','yhat_lower:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).properties(
         width=800, height=800
         ).add_selection(
         scales
