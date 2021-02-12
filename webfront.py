@@ -371,7 +371,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 st.markdown('<h1>Galaxy</h1>', unsafe_allow_html=True)
 
 with st.beta_expander('Description: click here 👉'):
-        st.markdown('Market Analysis? Better stock discovery based in past performance (1$ evolution) and trends (Forecast AI worse case line). To interpret the chart, the more an stock in the right, the higher past performance.And the upper of a stock, the higher trend performance. Interact with the chart and filter by sector and zoom in. ')
+        st.markdown('Market Analysis? Better stock discovery based in past performance (1$ evolution) and trends (Forecast AI worse case line). To interpret the chart, the righter of a stock, the higher past performance. And the upper of a stock, the higher trend performance. Interact with the chart and filter by sector and zoom in. ')
 st.markdown('<br>', unsafe_allow_html=True) 
 
 st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed companies in the US over $2B market cap')
