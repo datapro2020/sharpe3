@@ -52,9 +52,9 @@ def My_Cluster(ann_mean, ann_std):
 def Daily():
     return toolbox.Daily_info()
 
-@st.cache(ttl=28800)
-def TodayGalaxy(df):
-    return toolbox.Galaxy(df)
+#@st.cache(ttl=28800)
+#def TodayGalaxy(df):
+#    return toolbox.Galaxy(df)
 
 col1, col2 = st.beta_columns(2)
 
@@ -376,7 +376,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 
 st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed companies in the US over $2B market cap')
 
-pic = TodayGalaxy(tupper)
+pic = toolbox.Galaxy(tupper)
 st.altair_chart(pic, use_container_width=True)
 
 
