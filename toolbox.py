@@ -205,6 +205,7 @@ def Plot_Performance3(df,us):
         y='price:Q',
         color='ticker:N',
         strokeDash='ticker:N',
+        opacity=alt.condition(selection, alt.value(1), alt.value(0.2)),
         tooltip=[ 'Date:T','ticker:N','price:N']
     ).add_selection(selection).properties(
             width=800, height=400

@@ -256,13 +256,11 @@ k_means.index.name = 'ticker'
 
 k_means_pic = k_means.reset_index()
 
-
-
-
+selection = alt.selection_multi(fields=['Cluster'], bind='legend')
 scales = alt.selection_interval(bind='scales')
-pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Cluster:N', tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).add_selection(
+pic = alt.Chart(k_means_pic).mark_point().encode(x='Volatility',y='Return',color='Cluster:N',opacity=alt.condition(selection, alt.value(1), alt.value(0.2)), tooltip=['ticker:N', 'Volatility:N','Return:N','Name:N','Country:N','Sector:N','Industry:N','IPO Year:N','Market Cap:N']).add_selection(
     scales
-)
+).add_selection(selection)
 
 
 col1, col2 = st.beta_columns(2)
@@ -279,10 +277,11 @@ with col2:
     for i in portfolio:
         st.markdown(i+' is within the cluster **'+k_means.loc[i,'Cluster'].astype(str)+'**')
 
-#st.write(k_means[k_means['Clustering']==0].head(3))
 
+
+st.markdown('🔎 Zoom-in the chart and filter by Cluster')
 st.altair_chart(pic, use_container_width=True)
-st.markdown('🔎 Zoom-in the chart')
+
 
 tupper = pd.merge(k_means['Cluster'], tupper_df, left_index=True, right_index=True)
 tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','performance','trend','yhat_lower','yhat_upper'])
@@ -372,11 +371,12 @@ st.markdown('<br>', unsafe_allow_html=True)
 st.markdown('<h1>Galaxy</h1>', unsafe_allow_html=True)
 
 with st.beta_expander('Description: click here 👉'):
-        st.markdown('Market Analysis? Better stock discovery based in past performance (1$ evolution) and trends (Forecast AI worse case line). To interpret the chart, the righter of a stock, the higher past performance. And the upper of a stock, the higher trend performance. Interact with the chart and filter by sector and zoom in. ')
+        st.markdown('Market Analysis? Better stock discovery based in past performance (1$ evolution) and trends (Forecast AI worse case line). To interpret the chart, the righter of a stock, the higher past performance. And the upper of a stock, the higher trend performance. X axis = yearly performance, Y axis = trend (worse case) ')
 st.markdown('<br>', unsafe_allow_html=True) 
 
 st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed companies in the US over $2B market cap')
 
+st.markdown('🔎 Zoom-in the chart and filter by Sector')
 pic = toolbox.Galaxy(tupper)
 st.altair_chart(pic, use_container_width=True)
 st.markdown('🔎 Zoom-in the chart and filter by Sector')
