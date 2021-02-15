@@ -234,7 +234,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 #Clustering
 st.markdown('<h1>Clustering</h1>', unsafe_allow_html=True)
 
-with st.beta_expander('Description'):
+with st.beta_expander('Description: click here 👉'):
         st.markdown('In Machine Learning, data "unlabeled" can be automaticaly organized, known as “unsupervised learning”. The K-means clustering algorithm is a part of unsupervised learning, which a given unlabeled dataset will automatically grouped into coherent clusters ')
 st.markdown('<br>', unsafe_allow_html=True) 
 
@@ -282,6 +282,7 @@ with col2:
 #st.write(k_means[k_means['Clustering']==0].head(3))
 
 st.altair_chart(pic, use_container_width=True)
+st.markdown('🔎 Zoom-in the chart')
 
 tupper = pd.merge(k_means['Cluster'], tupper_df, left_index=True, right_index=True)
 tupper = pd.DataFrame(tupper, columns=['Cluster','Name','Country','Sector','Industry','Market Cap','IPO Year','Return','Volatility','Sharpe','Min_Corr','Corr_value','performance','trend','yhat_lower','yhat_upper'])
@@ -329,7 +330,7 @@ st.markdown('<br>', unsafe_allow_html=True)
 #Forecasting
 st.markdown('<h1>AI Forecasting</h1>', unsafe_allow_html=True)
 
-with st.beta_expander('Description'):
+with st.beta_expander('Description: click here 👉 '):
         st.write('Forecasting based in historical data is no indication of whether a price will go up or down. However, modern AI technology can provide a forecasting framework for non-linear trends like the stock market. Sharpe 3 used the Prophet open source engine developed by Facebook to automate and adapt stock forecasting. Those charts represent trends for the next 12 months, with the best case (yhat_upper) and the worse case(yhat_lower) forecast line')
 st.markdown('<br>', unsafe_allow_html=True)  
 
@@ -378,6 +379,7 @@ st.markdown('Dataset of **'+str(len(tupper_df.index.array))+'** public listed co
 
 pic = toolbox.Galaxy(tupper)
 st.altair_chart(pic, use_container_width=True)
+st.markdown('🔎 Zoom-in the chart and filter by Sector')
 
 
 st.markdown('<br><br><br>', unsafe_allow_html=True)   
