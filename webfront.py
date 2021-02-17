@@ -324,6 +324,8 @@ if 'by Forecast Trend' in cluster_view:
 
 
 
+
+
 st.markdown('<br>', unsafe_allow_html=True)  
 
 #Forecasting
@@ -366,6 +368,11 @@ with col3:
 
 st.markdown('<br>', unsafe_allow_html=True)  
 
+st.markdown('<h3>China rank by Sharpe</h3>', unsafe_allow_html=True)
+china = tupper[tupper['Country']=='China'].sort_values(by='Sharpe', ascending = False).head(10)
+st.dataframe(china.style.highlight_min(axis=1))
+
+st.markdown('<br>', unsafe_allow_html=True)  
 
 #Galaxy
 st.markdown('<h1>Galaxy</h1>', unsafe_allow_html=True)

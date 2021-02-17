@@ -314,7 +314,7 @@ def Performance(p):
 
 def Daily_info():
     win = yf.get_day_gainers()
-    win = win.sort_values(by='Market Cap',ascending = False).head(5).sort_values(by='% Change',ascending = False)
+    win = win.sort_values(by='% Change',ascending = False).head(5)
     lose = yf.get_day_losers()
     lose = lose.sort_values(by='Market Cap',ascending = False).head(5).sort_values(by='% Change',ascending = True)
     active = yf.get_day_most_active()
