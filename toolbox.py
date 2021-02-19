@@ -316,9 +316,9 @@ def Daily_info():
     win = yf.get_day_gainers()
     win = win.sort_values(by='% Change',ascending = False).head(5)
     lose = yf.get_day_losers()
-    lose = lose.sort_values(by='Market Cap',ascending = False).head(5).sort_values(by='% Change',ascending = True)
+    lose = lose.sort_values(by='% Change',ascending = True).head(5)
     active = yf.get_day_most_active()
-    active = lose.sort_values(by='Market Cap',ascending = False).head(5)
+    active = active.head(5)
     return win,lose,active
 
 #df1 in from Tupper. df2 is from input
